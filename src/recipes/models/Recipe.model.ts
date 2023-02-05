@@ -9,6 +9,23 @@ export class Recipe extends DomainDataModel {
    
     private _mealKitId: string;
 
+    /**
+     * 
+     * @param _name Name of the recipe
+     * @param _description Description of the recipe
+     * @param _instructionVideo Media object or url to recipe instruction video 
+     * @param _ingredients List of ingredient ids along with quatities per serve size
+     * @param _instructions list of instruction steps in the expected order of 
+     * execution or linked by nextStep & prevStep attributes
+     * @param _totalPreptime total estimated time take to prepare this recipe 
+     * @param _customerScore aggregated customer rating for this meal kit
+     * @param _tags queriable phrases that define or relate to this meal kit.
+     * @param _mealChecks a list of checks every recipe should declare. 
+     * @param isAvailable flag to maintain the availability (or the contrary) of a given meal
+     * @param createdOn the date on which the meal was created
+     * @param createdBy the user id of the user by whom this meal kit (recipe) was created
+     * @param mealKitId mealkit id.
+     */
     constructor(
         private _name: string,
         private _description: string,
@@ -36,7 +53,7 @@ export class Recipe extends DomainDataModel {
         if (mealKitId) {
             this._mealKitId = mealKitId;
         } else {
-            this._mealKitId = Recipe.generateEntityId();
+            this._mealKitId = Recipe.generateEntityId('recipe');
         }
     }
 
