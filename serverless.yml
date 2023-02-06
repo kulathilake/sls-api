@@ -6,13 +6,21 @@ provider:
   runtime: nodejs18.x
 
 functions:
-  api:
-    handler: index.handler
+  recipe_customer:
+    handler: src/recipes/handlers/customer.handler
     events:
-      - httpApi: '*'
-
+      - httpApi:
+          method: '*'
+          path: '/recipe/{any+}'
+  recipe_admin:
+    handler: src/recipes/handlers/admin.handler
+    events:
+      - httpApi:
+          method: '*'
+          path: '/admin/recipe/{any+}'
 plugins:
   - serverless-dynamodb-local
+  - serverless-esbuild
   - serverless-offline
 
 custom:

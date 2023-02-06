@@ -1,13 +1,14 @@
 import { ServeSize } from "../../../common/common.types";
 import { createQuantityByServeSize } from "../../../common/common.utils";
+import { Ingredient } from "../Ingredient.model";
 import { Recipe } from "../Recipe.model";
 
-const mockGenericRecipe = new Recipe(
+export const mockGenericRecipe = new Recipe(
     'Sample Recipe',
     'This is a sample recipe',
     { type: 'VIDEO', 'url': 'ss' },
     [
-        { id: "x", quantity: createQuantityByServeSize({ size: ServeSize.INDIVIDUAL, quantity: 10 }, { size: ServeSize.FAMILY, quantity: 42 })},
+        { ingredient: new Ingredient(new Date(),'user'), quantity: createQuantityByServeSize({ size: ServeSize.INDIVIDUAL, quantity: 10 }, { size: ServeSize.FAMILY, quantity: 42 })},
 
     ],
     [],

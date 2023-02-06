@@ -1,13 +1,14 @@
 import { DomainDataModel } from "../../common/common.model";
 import { Media, QuantityByServeSize, RecipeInstructionStep, ServeSize, TimeBreakdown } from "../../common/common.types";
-import { createQuantityByServeSize } from "../../common/common.utils";
+import {RecipeDto} from "../dtos/Recipe.dto"
+import { Ingredient } from "./Ingredient.model";
 
 /**
  * Domain class for entity Recipe;
  */
 export class Recipe extends DomainDataModel {
 
-    private _mealKitId: string;
+    private _recipeId: string;
 
     /**
      * 
@@ -24,13 +25,13 @@ export class Recipe extends DomainDataModel {
      * @param isAvailable flag to maintain the availability (or the contrary) of a given meal
      * @param createdOn the date on which the meal was created
      * @param createdBy the user id of the user by whom this meal kit (recipe) was created
-     * @param mealKitId mealkit id.
+     * @param recipeId mealkit id.
      */
     constructor(
         private _name: string,
         private _description: string,
         private _instructionVideo: string | Media,
-        private _ingredients: { id: string; quantity: QuantityByServeSize; }[],
+        private _ingredients: { ingredient: Ingredient; quantity: QuantityByServeSize; }[],
         private _instructions: RecipeInstructionStep[],
         private _totalPreptime: TimeBreakdown,
         private _customerScore: number,
@@ -46,27 +47,51 @@ export class Recipe extends DomainDataModel {
         private _isAvailable: boolean,
         createdOn: Date,
         createdBy: string,
-        mealKitId?: string,
+        recipeId?: string,
         
     ) {
         super(createdOn,createdBy);
-        if (mealKitId) {
-            this._mealKitId = mealKitId;
+        if (recipeId) {
+            this._recipeId = recipeId;
         } else {
-            this._mealKitId = Recipe.generateEntityId('recipe');
+            this._recipeId = Recipe.generateEntityId('recipe');
         }
     }
 
     public save() {
         throw new Error('method not implemented')
     }
+
+    public mapToDto():RecipeDto  {
+        return {
+            id: this.recipeId,
+            name: this.name,
+            description: this.description,
+            instructionVideo: this.instructionVideo,
+            ingredients: this.ingredients,
+            instrctions: this.instructions,
+            totalPrepTime: this.totalPreptime,
+            customerScore: this.customerScore,
+            tags: this.tags,
+            mealChecks: this.mealChecks,
+            isAvailable: this.isAvailable,
+            createdBy: this.createdBy,
+            createdOn: this.createdOn,
+            updatedBy: this.updatedBy,
+            updatedOn: this.updatedOn,
+            isRemoved: this.isRemoved,
+            removedBy: this.removedBy,
+            removedOn: this.removedOn,
+            sharedWith: this.sharedWith
+        }
+    }
     
     /** Getters & Setters */
-    public get mealKitId(): string {
-        return this._mealKitId;
+    public get recipeId(): string {
+        return this._recipeId;
     }
-    public set mealKitId(value: string) {
-        this._mealKitId = value;
+    public set recipeId(value: string) {
+        this._recipeId = value;
     }
 
     public get mealChecks(): {
@@ -113,10 +138,10 @@ export class Recipe extends DomainDataModel {
     public set instructions(value: RecipeInstructionStep[]) {
         this._instructions = value;
     }
-    public get ingredients(): { id: string; quantity: QuantityByServeSize; }[] {
+    public get ingredients(): { ingredient: Ingredient; quantity: QuantityByServeSize; }[] {
         return this._ingredients;
     }
-    public set ingredients(value: { id: string; quantity: QuantityByServeSize; }[]) {
+    public set ingredients(value: { ingredient: Ingredient; quantity: QuantityByServeSize; }[]) {
         this._ingredients = value;
     }
     public get instructionVideo(): string | Media {
@@ -145,6 +170,7 @@ export class Recipe extends DomainDataModel {
         this._isAvailable = value;
     }
    
+
 
 }
 

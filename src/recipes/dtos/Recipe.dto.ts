@@ -1,7 +1,8 @@
-import { Media, QuantityByServeSize, RecipeInstructionStep, TimeBreakdown } from "../../common/common.types";
+import { BaseDto, Media, QuantityByServeSize, RecipeInstructionStep, TimeBreakdown } from "../../common/common.types";
 import { Ingredient } from "../models/Ingredient.model";
 
-export interface CreateRecipeDTO {
+export interface RecipeDto extends BaseDto {
+    id: string;
     name: string;
     description: string;
     instructionVideo: Media | string;

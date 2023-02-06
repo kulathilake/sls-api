@@ -98,5 +98,11 @@ export abstract class DomainDataModel {
     /**
      * Persists this data object
      */
-    public abstract save()
+    public abstract save(): any
+
+    /**
+     * maps current domain object to its 
+     * natural dto
+     */
+    public abstract mapToDto():any;
 }

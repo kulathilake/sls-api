@@ -43,4 +43,5 @@ export class RecipeService{
     getAllRecipes(query?: Map<string,string|number|boolean>, page?:PageMeta<Recipe>):Promise<Recipe> {
         throw new Error('method not implemented');
     }
+
 }

@@ -75,3 +75,19 @@ export type Page<T> = {
     next?: PageMeta<T> 
     results: T[]
 }
+
+/**
+ * common dto interface
+ */
+export interface BaseDto {
+    createdBy: string;
+    createdOn: Date;
+    updatedBy?: string;
+    updatedOn?: Date;
+    isRemoved?: boolean;
+    removedOn?: Date;
+    removedBy?: string;
+    sharedWith?: {user:string, permissions:string[]}[] 
+
+}
+
