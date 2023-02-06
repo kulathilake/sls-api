@@ -6,7 +6,7 @@ import { createQuantityByServeSize } from "../../common/common.utils";
  * Domain class for entity Recipe;
  */
 export class Recipe extends DomainDataModel {
-   
+
     private _mealKitId: string;
 
     /**
@@ -43,7 +43,7 @@ export class Recipe extends DomainDataModel {
             containsDairy: boolean;
             isHalal: boolean;
         },
-        private isAvailable: boolean,
+        private _isAvailable: boolean,
         createdOn: Date,
         createdBy: string,
         mealKitId?: string,
@@ -137,7 +137,14 @@ export class Recipe extends DomainDataModel {
     public set name(value: string) {
         this._name = value;
     }
-
+    
+    public get isAvailable(): boolean {
+        return this._isAvailable;
+    }
+    public set isAvailable(value: boolean) {
+        this._isAvailable = value;
+    }
+   
 
 }
 
