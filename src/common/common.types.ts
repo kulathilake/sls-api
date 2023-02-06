@@ -52,3 +52,26 @@ export type Media = {
     isEmbedded?: boolean,
     size?: number
 }
+
+/**
+ * Data Pagination
+ */
+
+/**
+ * Page Metadata to identify a page
+ */
+export type PageMeta<T> = {
+    size: number
+    from?: number | string | T
+}
+
+/**
+ * Actual page defined by meta 
+ * and as retrieved from datastore.
+ */
+export type Page<T> = {
+    count: number,
+    meta: PageMeta<T>
+    next?: PageMeta<T> 
+    results: T[]
+}

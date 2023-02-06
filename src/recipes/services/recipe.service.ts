@@ -1,0 +1,46 @@
+import { PageMeta } from "../../common/common.types";
+import { CreateRecipeDTO } from "../dtos/createRecipe.dto";
+import { UpdateRecipeDTO } from "../dtos/updateRecipe.dto";
+import { Recipe } from "../models/Recipe.model";
+import { Service } from "typedi";
+/**
+ * Recipe Services
+ */
+@Service()
+export class RecipeService{
+
+    /**
+     * Creates a new Recipe and persists in 
+     * datastore.
+     */
+    adminCreateRecipe(payload: CreateRecipeDTO):Promise<Recipe>{
+        throw new Error('method not implemented');
+    }
+
+    /**
+     * Updates a recipe with a given set of values.
+     * @param recipeId 
+     * @param payload 
+     */
+    adminUpdateRecipe(recipeId: string, payload: UpdateRecipeDTO): Promise<Recipe> {
+        throw new Error('method not implemented');
+    }
+
+    /**
+     * Retrieves a recipe by a given Id from
+     * data store.
+     * @param id 
+     */
+    getRecipe(id:string):Promise<Recipe>{
+        throw new Error('method not implemented');
+    }
+
+    /**
+     * fetches a page of recipes
+     * @param query query to match
+     * @param page page of data required
+     */
+    getAllRecipes(query?: Map<string,string|number|boolean>, page?:PageMeta<Recipe>):Promise<Recipe> {
+        throw new Error('method not implemented');
+    }
+}
