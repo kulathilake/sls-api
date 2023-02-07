@@ -1,4 +1,5 @@
-import { Media, QuantityByServeSize, RecipeInstructionStep, TimeBreakdown } from "../../common/common.types";
+import { Media, TimeBreakdown } from "../../common/common.types";
+import { QuantityByServeSize, RecipeInstructionStep } from "../types/recipe.types";
 import { Ingredient } from "../models/Ingredient.model";
 
 export interface CreateRecipeDTO {

@@ -1,4 +1,5 @@
-import { BaseDto, Media, QuantityByServeSize, RecipeInstructionStep, TimeBreakdown } from "../../common/common.types";
+import { BaseDto, Media, TimeBreakdown } from "../../common/common.types";
+import { QuantityByServeSize, RecipeInstructionStep } from "../types/recipe.types";
 import { Ingredient } from "../models/Ingredient.model";
 
 export interface RecipeDto extends BaseDto {

@@ -1,4 +1,4 @@
-import { QuantityByServeSize, ServeSize } from "./common.types";
+import { QuantityByServeSize, ServeSize } from "../types/recipe.types";
 
 /**
  * create a quantity by serve size map based on an array of 

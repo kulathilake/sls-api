@@ -1,5 +1,5 @@
-import { ServeSize } from "../../../common/common.types";
-import { createQuantityByServeSize } from "../../../common/common.utils";
+import { ServeSize } from "../../types/recipe.types";
+import { createQuantityByServeSize } from "../../utils/recipe.utils";
 import { Ingredient } from "../Ingredient.model";
 import { Recipe } from "../Recipe.model";
 

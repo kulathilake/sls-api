@@ -1,5 +1,6 @@
 import { DomainDataModel } from "../../common/common.model";
-import { Media, QuantityByServeSize, RecipeInstructionStep, ServeSize, TimeBreakdown } from "../../common/common.types";
+import { Media, TimeBreakdown } from "../../common/common.types";
+import { QuantityByServeSize, RecipeInstructionStep, ServeSize } from "../types/recipe.types";
 import {RecipeDto} from "../dtos/Recipe.dto"
 import { Ingredient } from "./Ingredient.model";
 
