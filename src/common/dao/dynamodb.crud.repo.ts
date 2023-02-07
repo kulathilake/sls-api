@@ -2,17 +2,24 @@ import { PageMeta, Page } from "../common.types";
 import { CRUDRepo } from "./crud.repo";
 import Client from '@aws-sdk/client-dynamodb';
 
+const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://localhost:8000';
 
 export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected dynamodb: Client.DynamoDB;
-    
-    constructor(){
+    protected tableName: string;
+    protected partitionKey?: string;
+    protected sortKey?: string;
+
+    constructor(tableName: string, partitionKey?:string, sortKey?: string){
         const config = {};
         if(process.env.IS_OFFLINE) {
             (config as any).region = "localhost";
-            (config as any).endpoint = "http://localhost:8000"
+            (config as any).endpoint = LOCAL_DYNAMODB_ENDPOINT
         }
         
+        this.tableName = tableName;
+        this.partitionKey = partitionKey;
+        this.sortKey = sortKey;
         this.dynamodb  = new Client.DynamoDB(config);
     }
 

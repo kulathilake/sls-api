@@ -8,11 +8,12 @@ export const permissionGroups: { [s: string]: PermissionGroup } = {
             'ADMIN_CREATE_ANY', 
             'ADMIN_VIEW_ANY', 
             'ADMIN_UPDATE_ANY', 
-            'ADMIN_REMOVE_ANY'],
+            'ADMIN_REMOVE_ANY'
+        ],
         includeGroups: [],
     },
     CREATOR: {
-        permissionScope: 'OWN',
+        permissionScope: 'SHARED_OR_OWN',
         permissions: [],
         includeGroups: [
             'CREATOR_RESOURCE'
