@@ -24,8 +24,6 @@ export class AccessControlImpl implements AccessControl {
         const role = await this.getUserRole(token); 
         if(role){
             const permissions = getPermissionsFromGroup(role);
-            const scope = getPermissionScopeForRole(role);
-
             const action = actions.find(a=>a.name === actionName);
 
             if(action){
