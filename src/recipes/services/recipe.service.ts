@@ -2,18 +2,24 @@ import { PageMeta } from "../../common/common.types";
 import { CreateRecipeDTO } from "../dtos/createRecipe.dto";
 import { UpdateRecipeDTO } from "../dtos/updateRecipe.dto";
 import { Recipe } from "../models/Recipe.model";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
+import { RecipeRepo } from "../dao/recipe.daoImpl";
 /**
  * Recipe Services
  */
 @Service()
 export class RecipeService{
 
+    @Inject()
+    recipeRepo!: RecipeRepo;
+    
     /**
      * Creates a new Recipe and persists in 
      * datastore.
      */
     adminCreateRecipe(payload: CreateRecipeDTO):Promise<Recipe>{
+        this.recipeRepo.create(payload)
+        .then()
         throw new Error('method not implemented');
     }
 
