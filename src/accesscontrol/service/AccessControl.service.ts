@@ -3,6 +3,7 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { Inject, Service } from "typedi";
 import { actions } from "../consts/actions";
+import { getPermissionScopeForRole, getPermissionsFromGroup } from "../consts/permissions";
 import { AccessControl } from "./IAccessControl.service";
 
 @Service()
@@ -19,8 +20,25 @@ export class AccessControlImpl implements AccessControl {
     authorizationChecker(action: string, userPermissions: string[]): boolean {
         throw new Error("Method not implemented.");
     }
-    isAuthorized(action: string, token?: string | undefined): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async isAuthorized(actionName: string, token: string): Promise<boolean> {
+        const role = await this.getUserRole(token); 
+        if(role){
+            const permissions = getPermissionsFromGroup(role);
+            const scope = getPermissionScopeForRole(role);
+
+            const action = actions.find(a=>a.name === actionName);
+
+            if(action){
+                return action.requiredPermissions.some((group)=>{
+                    return group.every(p=> permissions.includes(p))
+                })
+
+            }else{
+                throw new Error('ACL:AuthorizationCheck(isAuthorized): Action not found');
+            }
+        } else {
+            throw new Error('ACL:AuthorizationCheck(isAuthorized): Token does not provide a valid user role.')
+        }
     }
     getActionFromRequest(request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>): string {
         const pathToMatch = this.basePath + request.path;

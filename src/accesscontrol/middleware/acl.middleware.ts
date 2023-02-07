@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import Container, { Inject } from "typedi";
+import Container from "typedi";
 import { AccessControlImpl } from "../service/AccessControl.service";
-import {AccessControl} from "../service/IAccessControl.service"
-
 
 /**
  * This custom middleware function will intercept the express
@@ -19,11 +17,10 @@ export async function accesscontrol(req:Request,res:Response, next:NextFunction)
         let isAllowed: boolean;
         const token = req.headers['authorization'];
         const action = aclSVc.getActionFromRequest(req);
-        
-        if(!token){
-            isAllowed = aclSVc.isActionAllowedWithNoToken(action);
-        } else {
+        if(token){
             isAllowed = await aclSVc.isAuthorized(action,token)
+        } else {
+            isAllowed = aclSVc.isActionAllowedWithNoToken(action);
         }
         if(isAllowed){
             next();

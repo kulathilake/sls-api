@@ -21,7 +21,7 @@ export interface AccessControl {
      * @param action 
      * @param roles 
      */
-    authorizationChecker(action: string, userPermissions:string[]):boolean;
+    authorizationChecker(actionName: string, userPermissions:string[]):boolean;
 
     /**
      * Single method that will perform user fetching
@@ -30,7 +30,7 @@ export interface AccessControl {
      * @param action 
      * @param token
      */
-    isAuthorized(action:string, token?:string):Promise<boolean>;
+    isAuthorized(action:string, token:string):Promise<boolean>;
 
     /**
      * Returns the matching action for a given express request;

@@ -21,7 +21,6 @@ app.use(accesscontrol);
 app.post('/create',
     async (req, res, next) => {
         try {
-            console.log(process.env)
             const createRes = await recipeService.adminCreateRecipe(req.body as CreateRecipeDTO);
             if (createRes) {
                 return res.status(201).json({
