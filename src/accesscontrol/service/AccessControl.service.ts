@@ -8,32 +8,58 @@ import { AccessControl } from "./IAccessControl.service";
 
 @Service()
 export class AccessControlImpl implements AccessControl {
+
     @Inject('BASE_PATH')
     basePath!: string;
 
-    getUserRole(token: string): Promise<string> {
-        throw new Error("Method not implemented.");
+    /**
+     * Cache token reads
+     */
+    private _cachedUser: any;
+    /**
+     * Cache a read entity for future use
+     */
+    private _cachedEntity?: {id:string,data:any};
+
+    get currentUser(){
+        if(this._cachedEntity){
+            return this._cachedUser;
+        } else {
+            return null
+        }
     }
-    getUserPermissions(token: string): Promise<string[]> {
-        throw new Error("Method not implemented.");
+
+    get cachedEntity():{id:string,data:any} | null {
+        if(this._cachedEntity){
+            return this.cachedEntity
+        } else {
+            return null;
+        }
     }
-    authorizationChecker(action: string, userPermissions: string[]): boolean {
-        throw new Error("Method not implemented.");
+
+    async getUserRole(token: string): Promise<string> {
+        if(this.currentUser){
+            return (this.currentUser as any).role;
+        } else {
+            throw new Error("Method not implemented.");
+        }
     }
+
+    getCustomUserPermissions(token: string): Promise<string[]> {
+        if(this.currentUser){
+            return (this.currentUser as any).customPermissions;
+        } else {
+            throw new Error("Method not implemented.");
+        }
+    }
+
     async isAuthorized(actionName: string, token: string): Promise<boolean> {
         const role = await this.getUserRole(token); 
+        const customPerms = await this.getCustomUserPermissions(token);
+
         if(role){
             const permissions = getPermissionsFromGroup(role);
-            const action = actions.find(a=>a.name === actionName);
-
-            if(action){
-                return action.requiredPermissions.some((group)=>{
-                    return group.every(p=> permissions.includes(p))
-                })
-
-            }else{
-                throw new Error('ACL:AuthorizationCheck(isAuthorized): Action not found');
-            }
+            return this.authorizationChecker(actionName,permissions)
         } else {
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Token does not provide a valid user role.')
         }
@@ -50,6 +76,18 @@ export class AccessControlImpl implements AccessControl {
     isActionAllowedWithNoToken(actionName: string): boolean {
         const action = actions.find(a => a.name === actionName);
         return (!!action && action.requiredPermissions.length === 0);
+    }
+
+    private authorizationChecker(actionName: string, userPermissions: string[]): boolean {
+        const action = actions.find(a=>a.name === actionName);
+        if(action){
+            return action.requiredPermissions.some((group)=>{
+                return group.every(p=> userPermissions.includes(p))
+            })
+        }else{
+            throw new Error('ACL:AuthorizationCheck(isAuthorized): Action not found');
+        }
+
     }
 
 }

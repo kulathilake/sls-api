@@ -11,17 +11,16 @@ export interface AccessControl {
      */
     getUserRole(token:string):Promise<string>;
     /**
-     * obtains the permissions granted to the user identified
-     * by access token (all roles granted to role and custom roles)
+     * obtains the custom permissions granted to the user identified
+     * by access token.
      * @param token 
      */
-    getUserPermissions(token:string):Promise<string[]>
+    getCustomUserPermissions(token:string):Promise<string[]>
     /**
      * is current 
      * @param action 
      * @param roles 
      */
-    authorizationChecker(actionName: string, userPermissions:string[]):boolean;
 
     /**
      * Single method that will perform user fetching
