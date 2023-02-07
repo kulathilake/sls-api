@@ -2,7 +2,7 @@ import { PageMeta } from "../../common/common.types";
 import { CreateRecipeDTO } from "../dtos/createRecipe.dto";
 import { UpdateRecipeDTO } from "../dtos/updateRecipe.dto";
 import { Recipe } from "../models/Recipe.model";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import { RecipeRepo } from "../dao/recipe.daoImpl";
 /**
  * Recipe Services
@@ -10,8 +10,7 @@ import { RecipeRepo } from "../dao/recipe.daoImpl";
 @Service()
 export class RecipeService{
 
-    @Inject()
-    recipeRepo!: RecipeRepo;
+    recipeRepo = Container.get(RecipeRepo);
     
     /**
      * Creates a new Recipe and persists in 

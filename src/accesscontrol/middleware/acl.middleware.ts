@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import Container, { Inject } from "typedi";
+import { AccessControlImpl } from "../service/AccessControl.service";
 import {AccessControl} from "../service/IAccessControl.service"
 
-const aclSVc = Container.get('AccessControl') as AccessControl;
+
 /**
  * This custom middleware function will intercept the express
  * request (path & token) to verify if the action being perfor
@@ -12,11 +13,13 @@ const aclSVc = Container.get('AccessControl') as AccessControl;
  * @param next 
  */
 export async function accesscontrol(req:Request,res:Response, next:NextFunction) {
+    const aclSVc = Container.get(AccessControlImpl);
+
     try {
         let isAllowed: boolean;
         const token = req.headers['authorization'];
         const action = aclSVc.getActionFromRequest(req);
-
+        
         if(!token){
             isAllowed = aclSVc.isActionAllowedWithNoToken(action);
         } else {
@@ -25,15 +28,17 @@ export async function accesscontrol(req:Request,res:Response, next:NextFunction)
         if(isAllowed){
             next();
         }else{
-            res.send(401).json({
+            res.status(401).json({
                 error: 'Authorization Issue: Access Denied',
                 action
             })
         }
-        next();
     } catch (error) {
-        res.send(401).json({
-            error: 'Authorization Issue: Failed to determine access clearence'
+        res.status(401).json({
+            error: 'Authorization Issue: Failed to determine access clearence',
+            verbose: {
+                error: (error as Error).message, 
+            }
         })
     } 
 }

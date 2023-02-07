@@ -2,7 +2,7 @@ export type Action = {
     name: string;
     path: string;
     method: string;
-    requiredPermissions: string[]
+    requiredPermissions: string[][]
 }
 
 export type RolePermissions = {

@@ -1,19 +1,24 @@
+import 'reflect-metadata';
 import serverless from 'serverless-http';
 import express from 'express';
 import Container from 'typedi';
 import { RecipeService } from '../services/recipe.service';
 import { CreateRecipeDTO } from '../dtos/createRecipe.dto';
-import 'reflect-metadata';
+import { accesscontrol } from '../../accesscontrol/middleware/acl.middleware';
+import { init } from '../init';
+
+init();
 
 const app = express();
 
 const recipeService = Container.get(RecipeService);
 
+app.use(accesscontrol);
+
 /**
  * create route
  */
 app.post('/create',
-
     async (req, res, next) => {
         try {
             console.log(process.env)
@@ -52,5 +57,5 @@ app.use((req, res, next) => {
 
 
 export const handler = serverless(app, {
-    basePath: '/admin/recipe'
+    basePath: '/admin/recipe',
 });
