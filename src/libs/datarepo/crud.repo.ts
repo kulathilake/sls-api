@@ -1,4 +1,4 @@
-import { Page, PageMeta } from "../common.types";
+import { Page, PageMeta } from "../../common/common.types";
 
 export interface CRUDRepo<T,C,U> {
     create(create:C):Promise<T>;

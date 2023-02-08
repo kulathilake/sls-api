@@ -1,4 +1,4 @@
-import { PageMeta, Page } from "../common.types";
+import { PageMeta, Page } from "../../common/common.types";
 import { CRUDRepo } from "./crud.repo";
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { DataMapper } from "@aws/dynamodb-data-mapper";
@@ -8,18 +8,16 @@ const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://l
 export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected dynamodb: DynamoDB;
     protected mapper: DataMapper;
-    protected tableName: string;
     protected partitionKey?: string;
     protected sortKey?: string;
 
-    constructor(tableName: string, partitionKey?:string, sortKey?: string){
+    constructor(partitionKey?:string, sortKey?: string){
         const config = {};
         if(process.env.IS_OFFLINE) {
-            // (config as any).region = "localhost";
-            // (config as any).endpoint = LOCAL_DYNAMODB_ENDPOINT
+            (config as any).region = "localhost";
+            (config as any).endpoint = LOCAL_DYNAMODB_ENDPOINT
         }
         
-        this.tableName = tableName;
         this.partitionKey = partitionKey;
         this.sortKey = sortKey;
         this.dynamodb  = new DynamoDB(config);
