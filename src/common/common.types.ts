@@ -29,7 +29,8 @@ export type Media = {
  */
 export type PageMeta<T> = {
     size: number
-    from?: number | string | T
+    from?: number | string |  {name:string, value: string | number}
+    fromName? :string
 }
 
 /**
