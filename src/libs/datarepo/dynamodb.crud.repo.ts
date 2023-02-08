@@ -5,6 +5,7 @@ import { DataMapper, QueryOptions } from "@aws/dynamodb-data-mapper";
 import {ConditionExpression} from "@aws/dynamodb-expressions"
 
 const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://localhost:8000';
+const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';
 
 export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected dynamodb: DynamoDB;
@@ -14,7 +15,9 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected tableReady?: Promise<boolean>;
     protected modelConstructor: any;
     constructor(modelConstructor:any, partitionKey?:string, sortKey?: string){
-        const config = {};
+        const config = {
+            region: AWS_REGION
+        };
         if(process.env.IS_OFFLINE) {
             (config as any).endpoint = LOCAL_DYNAMODB_ENDPOINT
         }
