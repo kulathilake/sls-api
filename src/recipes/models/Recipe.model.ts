@@ -3,7 +3,7 @@ import { Media, TimeBreakdown } from "../../common/common.types";
 import { QuantityByServeSize, RecipeInstructionStep, ServeSize } from "../types/recipe.types";
 import {RecipeDto} from "../dtos/Recipe.dto"
 import { Ingredient } from "./Ingredient.model";
-
+import { table } from "@aws/dynamodb-data-mapper-annotations";
 /**
  * Domain class for entity Recipe;
  */
@@ -28,6 +28,7 @@ export class Recipe extends DomainDataModel {
      * @param createdBy the user id of the user by whom this meal kit (recipe) was created
      * @param recipeId mealkit id.
      */
+
     constructor(
         private _name: string,
         private _description: string,
@@ -65,7 +66,7 @@ export class Recipe extends DomainDataModel {
 
     public mapToDto():RecipeDto  {
         return {
-            id: this.recipeId,
+            recipeId: this.recipeId,
             name: this.name,
             description: this.description,
             instructionVideo: this.instructionVideo,

@@ -3,7 +3,7 @@ import { QuantityByServeSize, RecipeInstructionStep } from "../types/recipe.type
 import { Ingredient } from "../models/Ingredient.model";
 
 export interface RecipeDto extends BaseDto {
-    id: string;
+    recipeId: string;
     name: string;
     description: string;
     instructionVideo: Media | string;

@@ -41,7 +41,12 @@ export class AccessControlImpl implements AccessControl {
         if(this.currentUser){
             return (this.currentUser as any).role;
         } else {
-            throw new Error("Method not implemented.");
+            /** by pass for offline development */
+            if(process.env.IS_OFFLINE){
+                return Promise.resolve('ADMIN')
+            }else {
+                throw new Error('method not implemented')
+            }
         }
     }
 
@@ -49,7 +54,12 @@ export class AccessControlImpl implements AccessControl {
         if(this.currentUser){
             return (this.currentUser as any).customPermissions;
         } else {
-            throw new Error("Method not implemented.");
+              /** by pass for offline development */
+              if(process.env.IS_OFFLINE){
+                return Promise.resolve([])
+            }else {
+                throw new Error('method not implemented')
+            }
         }
     }
 
