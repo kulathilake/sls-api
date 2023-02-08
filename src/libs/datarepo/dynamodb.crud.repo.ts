@@ -49,7 +49,7 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
         throw new Error("Method not implemented.");
     }
 
-    async ensureTable(domainObj:any):Promise<any>{
+    private async ensureTable(domainObj:any):Promise<any>{
         return await this.mapper.ensureTableExists(domainObj,{readCapacityUnits:5,writeCapacityUnits:5})
         .then(s=>console.log({d:s,foo:'bar'}))
         .catch(e=>console.log({e,"error":"error"}))
