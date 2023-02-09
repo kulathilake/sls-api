@@ -13,6 +13,8 @@ const app = express();
 app.use(bodyparse.json());
 
 app.post('/mapper/create',(req,res,next)=>{
+    console.log(process.env.MOCK_TABLE_NAME);
+   
     const data = req.body;
     const repo = new DynamodbCRUD(MockDomainModel);
     const payload = Object.assign(new MockDomainModel(),data)

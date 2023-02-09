@@ -5,6 +5,8 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ap-southeast-1
+  environment:
+    MOCK_TABLE_NAME: ${self:custom.names.mockTable}
 
 functions:
   dynamodb_troubleshoot:
@@ -13,12 +15,9 @@ functions:
       - httpApi:
           method: '*'
           path: '/troubleshoot/dynamodb/{any+}'
-plugins:
-  - serverless-esbuild
-  - serverless-dynamodb-local
-  - serverless-offline
 
 custom:
+  stage: ${sls:stage, self:provider.stage}
   dynamodb:
     stages:
       - dev
@@ -33,3 +32,15 @@ custom:
   esbuild:
     watch:
       pattern: './\*_/_.(js|ts)'
+  # Custom Names to be used in each stage. 
+  names:
+    mockTable: ${self:custom.stage}-mock_table
+
+resources:
+  # DynamoDB
+  - ${file(resources/dynamodb-tables.${sls:stage}.yml)}
+
+plugins:
+  - serverless-esbuild
+  - serverless-dynamodb-local
+  - serverless-offline

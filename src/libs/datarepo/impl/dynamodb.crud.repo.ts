@@ -83,8 +83,13 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
                     queryOpts.filter = query.expressionAttribs
                 }
 
+                /** index */
+                queryOpts.indexName = 'ageIndex'
+                const q = {...query.keyExpressions};
+                
+                console.log({q,queryOpts})
                 /** query execution */
-                const results = this.mapper.query(this.modelConstructor,{[query.id.name]: query.id.value, ...query.keyExpressions},queryOpts)
+                const results = this.mapper.query(this.modelConstructor,q,queryOpts)
                 for await (const item of results) {
                     resPage.results.push(item as any);
                 }
@@ -108,8 +113,9 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     }
 
     protected async ensureTable(domainObj:any):Promise<boolean>{
-        return await this.mapper.ensureTableExists(domainObj,{readCapacityUnits:5,writeCapacityUnits:5})
-        .then(()=>{return true})
+        // return await this.mapper.ensureTableExists(domainObj,{readCapacityUnits:5,writeCapacityUnits:5})
+        // .then(()=>{return true})
+        return Promise.resolve(true);
     }
     
 }
