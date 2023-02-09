@@ -31,6 +31,7 @@ export type PageMeta<T> = {
     size: number
     from?: number | string |  {name:string, value: string | number}
     fromName? :string
+    sort?: Sort
 }
 
 /**
@@ -42,6 +43,11 @@ export type Page<T> = {
     meta: PageMeta<T>
     next?: PageMeta<T> 
     results: T[]
+}
+
+export type Sort = {
+    fieldName: string,
+    direction: 'ASC' | 'DESC'
 }
 
 /**

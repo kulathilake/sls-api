@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Core apis for meal-kit service",
   "scripts": {
+    "dev": "concurrently \"sls dynamodb start\"   \"sls offline\"",
     "test": "jest -c"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@types/jest": "^29.4.0",
     "@types/node": "^18.13.0",
     "aws-sdk-mock": "^5.8.0",
+    "concurrently": "^7.6.0",
     "esbuild": "^0.16.17",
     "jest": "^29.4.2",
     "nodemon": "^2.0.20",
