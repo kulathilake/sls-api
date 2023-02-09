@@ -8,7 +8,7 @@ provider:
 
 functions:
   dynamodb_troubleshoot:
-    handler: src/apis/troubleshoot/dynamodb.handler
+    handler: src/modules/troubleshoot/dynamodb.handler
     events:
       - httpApi:
           method: '*'
