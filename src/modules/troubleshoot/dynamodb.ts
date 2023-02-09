@@ -6,7 +6,7 @@
 import serverless from 'serverless-http';
 import express from 'express';
 import bodyparse from 'body-parser';
-import { DynamodbCRUD } from '../../libs/datarepo/dynamodb.crud.repo';
+import { DynamodbCRUD } from '../../libs/datarepo/impl/dynamodb.crud.repo';
 import { MockDomainModel } from '../../libs/datarepo/__mock__/MockDomain.model';
 const app = express();
 

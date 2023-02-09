@@ -20,6 +20,8 @@ dependencies and `libs` are made available.
 For deployment purposes, Serverless framework is used. It will expose features (found inside `src/apis`)
 through their own handler functions as AWS lambda functions.
 
+`typeDi` is used for dependency injection.
+
 ## Usage
 
 ### Deployment

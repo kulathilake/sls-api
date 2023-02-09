@@ -1,4 +1,4 @@
-import { DynamodbCRUD } from "../dynamodb.crud.repo"
+import { DynamodbCRUD } from "../impl/dynamodb.crud.repo"
 import { MockDynamoDb } from "../__mock__/dynamodb.crud.repo.mock";
 import { MockDomainModel } from "../__mock__/MockDomain.model";
 import AWSMock from 'aws-sdk-mock';

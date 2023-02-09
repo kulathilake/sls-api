@@ -1,4 +1,4 @@
-import { DynamoDbQuery } from "../../libs/datarepo/dynamodb.crud.repo";
+import { DynamoDbQuery } from "../../libs/datarepo/impl/dynamodb.crud.repo";
 import { PageMeta } from "../common.types";
 
 /**

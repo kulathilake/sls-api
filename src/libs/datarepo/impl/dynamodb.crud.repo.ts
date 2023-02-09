@@ -1,12 +1,17 @@
-import { PageMeta, Page } from "../../common/common.types";
-import { CRUDRepo } from "./crud.repo";
+import { PageMeta, Page } from "../../../common/common.types";
+import { CRUDRepo } from "../crud.repo";
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { DataMapper, QueryOptions } from "@aws/dynamodb-data-mapper";
 import {ConditionExpression} from "@aws/dynamodb-expressions"
+import { Service } from "typedi";
 
 const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://localhost:8000';
 const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';
 
+/**
+ * DynamoDB implementation of CRUD Repo
+ */
+@Service()
 export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected dynamodb: DynamoDB;
     protected mapper: DataMapper;

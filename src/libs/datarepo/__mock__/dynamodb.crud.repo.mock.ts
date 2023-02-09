@@ -1,4 +1,4 @@
-import { DynamodbCRUD } from "../dynamodb.crud.repo";
+import { DynamodbCRUD } from "../impl/dynamodb.crud.repo";
 import { MockDomainModel } from "./MockDomain.model";
 
 export class MockDynamoDb extends DynamodbCRUD<any,any,any>{
