@@ -1,44 +1,71 @@
 Resources:
-  MockTable:
+  UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ${self:custom.names.mockTable}
+      TableName: ${self:custom.names.userTable}
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: userid
           AttributeType: S
-        - AttributeName: name
-          AttributeType: S
-        - AttributeName: age
-          AttributeType: N
         - AttributeName: isRemoved
-          AttributeType: B
+          AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: userid
           KeyType: HASH
+        - AttributeName: isRemoved
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       GlobalSecondaryIndexes:
-        - IndexName: nameIndex
+        - IndexName: activeUsers
           KeySchema:
             - AttributeName: isRemoved
               KeyType: HASH
-            - AttributeName: name
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
-        - IndexName: ageIndex
-          KeySchema:
-            - AttributeName: isRemoved
-              KeyType: HASH
-            - AttributeName: age
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
+  # MockTable:
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: ${self:custom.names.mockTable}
+  #     AttributeDefinitions:
+  #       - AttributeName: id
+  #         AttributeType: S
+  #       - AttributeName: name
+  #         AttributeType: S
+  #       - AttributeName: age
+  #         AttributeType: N
+  #       - AttributeName: isRemoved
+  #         AttributeType: B
+  #     KeySchema:
+  #       - AttributeName: uid
+  #         KeyType: HASH
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 5
+  #       WriteCapacityUnits: 5
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: nameIndex
+  #         KeySchema:
+  #           - AttributeName: isRemoved
+  #             KeyType: HASH
+  #           - AttributeName: name
+  #             KeyType: RANGE
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 5
+  #           WriteCapacityUnits: 5
+  #       - IndexName: ageIndex
+  #         KeySchema:
+  #           - AttributeName: isRemoved
+  #             KeyType: HASH
+  #           - AttributeName: age
+  #             KeyType: RANGE
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #             ReadCapacityUnits: 5
+  #             WriteCapacityUnits: 5
               

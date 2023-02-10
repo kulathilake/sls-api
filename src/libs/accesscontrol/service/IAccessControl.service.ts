@@ -3,6 +3,7 @@
  */
 
 import { Request } from "express";
+import { Action } from "../types/acl.types";
 
 export interface AccessControl {
     /**
@@ -43,4 +44,10 @@ export interface AccessControl {
      * @param action 
      */
     isActionAllowedWithNoToken(action:string):boolean;
+
+    /**
+     * adds an action to the action object.
+     * @param action 
+     */
+    addAction(action:Action):void;
 }

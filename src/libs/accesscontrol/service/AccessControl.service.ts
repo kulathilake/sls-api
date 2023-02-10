@@ -1,9 +1,11 @@
 import { Request } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
+import { pathToRegexp, match } from "path-to-regexp";
 import { ParsedQs } from "qs";
 import { Inject, Service } from "typedi";
-import { actions } from "../consts/actions";
+import { actions as _actions } from "../consts/actions";
 import { getPermissionScopeForRole, getPermissionsFromGroup } from "../consts/permissions";
+import { Action } from "../types/acl.types";
 import { AccessControl } from "./IAccessControl.service";
 
 @Service()
@@ -20,6 +22,8 @@ export class AccessControlImpl implements AccessControl {
      * Cache a read entity for future use
      */
     private _cachedEntity?: {id:string,data:any};
+
+    private actions = [..._actions];
 
     get currentUser(){
         if(this._cachedEntity){
@@ -75,21 +79,27 @@ export class AccessControlImpl implements AccessControl {
         }
     }
     getActionFromRequest(request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>): string {
-        const pathToMatch = this.basePath + request.path;
-        const action = actions.find(action => action.path === pathToMatch && action.method === request.method);
+        const requestPath = this.basePath + request.path;
+        const doesMatch =(p:string)=>match(p,{decode:decodeURIComponent});
+        const action = this.actions.find(action => doesMatch(action.path)(requestPath) && action.method === request.method);
         if(action){
             return action.name
         }else {
             throw new Error('ACL:getActionFromRequest: Action not found');
         }
     }
+    
     isActionAllowedWithNoToken(actionName: string): boolean {
-        const action = actions.find(a => a.name === actionName);
+        const action = this.actions.find(a => a.name === actionName);
         return (!!action && action.requiredPermissions.length === 0);
     }
 
+    addAction(action: Action): void {
+        this.actions.push(action);
+    }
+
     private authorizationChecker(actionName: string, userPermissions: string[]): boolean {
-        const action = actions.find(a=>a.name === actionName);
+        const action = this.actions.find(a=>a.name === actionName);
         if(action){
             return action.requiredPermissions.some((group)=>{
                 return group.every(p=> userPermissions.includes(p))

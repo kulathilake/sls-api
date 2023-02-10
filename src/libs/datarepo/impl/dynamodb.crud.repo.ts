@@ -4,6 +4,7 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { DataMapper, QueryOptions } from "@aws/dynamodb-data-mapper";
 import {ConditionExpression} from "@aws/dynamodb-expressions"
 import { Service } from "typedi";
+import { stringMap } from "aws-sdk/clients/backup";
 
 const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://localhost:8000';
 const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';
@@ -15,16 +16,19 @@ const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';
 export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     protected dynamodb: DynamoDB;
     protected mapper: DataMapper;
-    protected partitionKey?: string;
+    protected partitionKey: string;
     protected sortKey?: string;
     protected tableReady?: Promise<boolean>;
     protected modelConstructor: any;
-    constructor(modelConstructor:any, partitionKey?:string, sortKey?: string){
-        const config = {
-            region: AWS_REGION
+    constructor(modelConstructor:any, partitionKey:string, sortKey?: string){
+        const config: DynamoDB.ClientConfiguration = {
+            region: AWS_REGION,
+            maxRetries: 2,
+            logger: console
         };
         if(process.env.IS_OFFLINE) {
             (config as any).endpoint = LOCAL_DYNAMODB_ENDPOINT
+            
         }
         
         this.partitionKey = partitionKey;
@@ -58,19 +62,32 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
         throw new Error("Method not implemented.");
     }
     findById(id: string): Promise<T> {
-        throw new Error("Method not implemented.");
+       const item = Object.assign( new this.modelConstructor(), {[this.partitionKey]: id});
+        
+       return this.mapper.get(item)
+        .then(d=>{
+            return d as T
+        })
+        .catch(e => {
+            throw new Error(`DateREpo:DynamoDbCRUD:FindById:${e.message || 'Unknown Error'}`)
+        })
+
     }
     async findPageByQuery(query: DynamoDbQuery, page: PageMeta<T>): Promise<Page<T>> {
         try {
             if(await this.tableReady){
                 const resPage = { results: [] as T[] }  as Page<T>;
-                const queryOpts = {} as QueryOptions;
+                const queryOpts = {
+                    limit: page.size,
+                    scanIndexForward: true,
+                    indexName: query.useIndex,
+                } as QueryOptions;
                 
                 /** pagination */
-                queryOpts.limit = page.size;
+                // queryOpts.limit = page.size;
                 if(page.from && typeof page.from === 'string') {
                     queryOpts.startKey = {
-                        [query.id.name]: query.id.value as string,
+                        [query.keyAttribName]: query.keyAttribValue as string,
                     }
 
                     if( page.fromName ) {
@@ -83,11 +100,8 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
                     queryOpts.filter = query.expressionAttribs
                 }
 
-                /** index */
-                queryOpts.indexName = 'ageIndex'
-                const q = {...query.keyExpressions};
-                
-                console.log({q,queryOpts})
+                const q = {[query.keyAttribName]:query.keyAttribValue};
+
                 /** query execution */
                 const results = this.mapper.query(this.modelConstructor,q,queryOpts)
                 for await (const item of results) {
@@ -121,10 +135,8 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
 }
 
 export interface DynamoDbQuery {
-    id: {
-        name: string,
-        value: string
-    }
-    keyExpressions: any,
+    useIndex?:string,
+    keyAttribName: string;
+    keyAttribValue: string | number | boolean;
     expressionAttribs?: ConditionExpression
 }

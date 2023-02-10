@@ -7,6 +7,7 @@ provider:
   region: ap-southeast-1
   environment:
     MOCK_TABLE_NAME: ${self:custom.names.mockTable}
+    USER_TABLE: ${self:custom.names.userTable}
 
 functions:
   dynamodb_troubleshoot:
@@ -15,6 +16,12 @@ functions:
       - httpApi:
           method: '*'
           path: '/troubleshoot/dynamodb/{any+}'
+  user:
+    handler: src/modules/users/main.handler
+    events:
+      - httpApi:
+          method: '*'
+          path: '/user/{any+}'
 
 custom:
   stage: ${sls:stage, self:provider.stage}
@@ -34,7 +41,8 @@ custom:
       pattern: './\*_/_.(js|ts)'
   # Custom Names to be used in each stage. 
   names:
-    mockTable: ${self:custom.stage}-mock_table
+    mockTable: ${sls:stage}-mock_table
+    userTable: ${sls:stage}-user-table
 
 resources:
   # DynamoDB
