@@ -1,7 +1,7 @@
 {
-  "name": "meal-kit-core-services",
+  "name": "only-so-much-life-core-services",
   "version": "1.0.0",
-  "description": "Core apis for meal-kit service",
+  "description": "Core apis for Only So Much Life service",
   "scripts": {
     "dev": "concurrently \"sls dynamodb start\"   \"sls offline\"",
     "test": "jest -c"
