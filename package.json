@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Core apis for Only So Much Life service",
   "scripts": {
-    "dev": "concurrently \"sls dynamodb start\"   \"sls offline\"",
+    "dev": "sls offline start",
     "test": "jest -c"
   },
   "dependencies": {

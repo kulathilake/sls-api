@@ -83,7 +83,6 @@ export class AccessControlImpl implements AccessControl {
         const sharedPermissions = entity.sharedWith?.find(sw=>sw.user === userId)?.permissions;
         const allPerms:string[] = [...permissions];
         const isOwn = entity.createdBy === userId;
-
         sharedPermissions?.forEach(perm=>{
             if(!allPerms.includes(perm)){
                 allPerms.push(perm);
@@ -129,6 +128,33 @@ export class AccessControlImpl implements AccessControl {
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Action not found');
         }
 
+    }
+
+    /**
+     * gets the value cross referenced by a field
+     * inside the same entity
+     * @param Obj 
+     * @param fieldName 
+     * @returns 
+     * @todo should belong in a util class
+     */
+    private getCrossReferenceFieldValue(Obj:any, fieldName:string): any {
+        const fieldExists = !!Obj[fieldName];
+        if(fieldExists){
+            const match = (Obj[fieldName] as string).match(/[^$]*$/)
+            
+            if(match && match?.['index'] && match[0] ){
+                if(Obj[match[0]]){
+                    return Obj[match[0]]
+                }else {
+                    throw new Error(`ACL:getCrossReferenceFieldValue:Invalid Field Reference - ${match[0]}`)
+                }
+            }else{
+                return Obj[fieldName];
+            }
+        } else {
+            return null;
+        }
     }
     
 

@@ -20,7 +20,7 @@ export function useCustomExpressApp(basePath:string) {
     return {
         app:{
             ...app,
-            useAction: acl.addAction.bind(acl)
+            registerApiAction: acl.addAction.bind(acl)
         },
         handler: serverless(app,{
             basePath
