@@ -4,7 +4,8 @@
   "description": "Core apis for Only So Much Life service",
   "scripts": {
     "dev": "sls offline start",
-    "test": "jest -c"
+    "test": "jest -c",
+    "test:dev": "cross-env IS_OFFLINE=true npm run prepare-dev-env & jest --watch"
   },
   "dependencies": {
     "@aws/dynamodb-data-mapper": "^0.7.3",
@@ -23,6 +24,7 @@
     "@types/node": "^18.13.0",
     "aws-sdk-mock": "^5.8.0",
     "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.16.17",
     "jest": "^29.4.2",
     "nodemon": "^2.0.20",

@@ -82,7 +82,7 @@ export class AccessControlImpl implements AccessControl {
     isAuthorizedToOperateOnEntity(action:Action, entity: BaseEntity, userId:string, permissions: string[]): {permMatch:boolean,isOwn:boolean} {
         const sharedPermissions = entity.sharedWith?.find(sw=>sw.user === userId)?.permissions;
         const allPerms:string[] = [...permissions];
-        const isOwn = entity.createdBy === userId;
+        const isOwn = this.getCrossReferenceFieldValue(entity, 'createdBy') === userId;
         sharedPermissions?.forEach(perm=>{
             if(!allPerms.includes(perm)){
                 allPerms.push(perm);

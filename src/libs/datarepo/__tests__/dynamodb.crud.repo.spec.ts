@@ -1,14 +1,13 @@
 import { DynamodbCRUD } from "../impl/dynamodb.crud.repo"
 import { MockDynamoDb } from "../__mock__/dynamodb.crud.repo.mock";
 import { MockDomainModel } from "../__mock__/MockDomain.model";
-import AWSMock from 'aws-sdk-mock';
 import 'reflect-metadata';
+import { DataMapper } from "@aws/dynamodb-data-mapper";
 
 let repo: MockDynamoDb;
 
 describe("Dynamodb CRUD Repo Test Suite", () =>{
     beforeEach(()=>{
-        AWSMock.mock('DynamoDB','putItem',()=>{});
         repo = new MockDynamoDb();
     })
 
@@ -19,7 +18,9 @@ describe("Dynamodb CRUD Repo Test Suite", () =>{
     describe("create", ()=>{
         
         beforeAll(()=>{
-            repo.getMapper().ensureTableExists = jest.fn().mockReturnValue(Promise.resolve({}));
+            jest.spyOn(DataMapper.prototype,'put').mockImplementation((...args:any)=>{
+                return Promise.resolve({} as any) 
+            })
         });
 
         it('should call mapper put with item', async ()=> {
@@ -30,6 +31,8 @@ describe("Dynamodb CRUD Repo Test Suite", () =>{
         })
     })
 
-
+    afterAll(()=>{
+        jest.resetAllMocks();
+    })
     
 })

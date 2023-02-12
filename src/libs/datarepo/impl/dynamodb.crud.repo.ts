@@ -54,7 +54,7 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
             } else {
                 throw new Error('DataRepo:DynamoDbCRUD:Create: Table Non Existent or Not Ready')
             }
-        } catch{
+        } catch(error){
             throw new Error('DataRepo:DynamoDbCRUD:Create: Unknown Error')
         }
     }
@@ -69,7 +69,7 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
             return d as T
         })
         .catch(e => {
-            throw new Error(`DateREpo:DynamoDbCRUD:FindById:${e.message || 'Unknown Error'}`)
+            throw new Error(`DataRepo:DynamoDbCRUD:FindById:${e.message || 'Unknown Error'}`)
         })
 
     }
