@@ -52,8 +52,8 @@ export class UserService {
         })
     }
 
-    updateUser(id:string, data: User) {
-        
+    updateUser(id:string, data: User):Promise<User> {
+        throw new Error('method not implemented')
     }
     
 }

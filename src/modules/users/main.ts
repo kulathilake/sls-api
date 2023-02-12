@@ -57,7 +57,16 @@ app.post('/',(req,res,next)=>{
 /** Update a user */
 app.registerApiAction({resource: 'user', name:'User:UPDATE', method:'PUT',path:'/user/:id', requiredPermissions:[]});
 app.put('/:id', (req,res,next)=> {
-    
+    const payload = Object.assign(new User(), req.body);
+    service.updateUser(req.params.id, payload)
+    .then(d=>{
+        res.status(200).json(d);
+    })
+    .catch(e=>{
+        res.status(500).json({
+            error: e.message
+        });
+    })
 })
 
 

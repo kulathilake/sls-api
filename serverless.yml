@@ -10,12 +10,6 @@ provider:
     USER_TABLE: ${self:custom.names.userTable}
 
 functions:
-  dynamodb_troubleshoot:
-    handler: src/modules/troubleshoot/dynamodb.handler
-    events:
-      - httpApi:
-          method: '*'
-          path: '/troubleshoot/dynamodb/{any+}'
   user:
     handler: src/modules/users/main.handler
     events:
