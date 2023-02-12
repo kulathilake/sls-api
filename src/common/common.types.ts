@@ -30,7 +30,7 @@ export type Media = {
 export type PageMeta<T> = {
     size: number
     from?: number | string |  {name:string, value: string | number}
-    fromName? :string
+    fromField? :string
     sort?: Sort
 }
 
@@ -51,17 +51,16 @@ export type Sort = {
 }
 
 /**
- * common dto interface
+ * common base entity
  */
-export interface BaseDto {
-    createdBy: string;
-    createdOn: Date;
+export class BaseEntity {
+    createdBy?: string;
+    createdOn?: Date;
     updatedBy?: string;
     updatedOn?: Date;
     isRemoved?: boolean;
     removedOn?: Date;
     removedBy?: string;
     sharedWith?: {user:string, permissions:string[]}[] 
-
 }
 

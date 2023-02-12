@@ -6,5 +6,9 @@ import { User } from "./user.model";
 export class UserRepo extends DynamodbCRUD<User,User,User>{
     constructor(){
         super(User,'userid');
-    }    
+    }  
+    
+    create(create: User): Promise<User> {
+        return super.create(create);
+    }
 }

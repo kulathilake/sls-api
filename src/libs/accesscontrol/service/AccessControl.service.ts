@@ -3,8 +3,8 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { pathToRegexp, match } from "path-to-regexp";
 import { ParsedQs } from "qs";
 import { Inject, Service } from "typedi";
-import { actions as _actions } from "../consts/actions";
-import { getPermissionScopeForRole, getPermissionsFromGroup } from "../consts/permissions";
+import { BaseEntity } from "../../../common/common.types";
+import { getPermissionsOnResourceType } from "../consts/permissions";
 import { Action } from "../types/acl.types";
 import { AccessControl } from "./IAccessControl.service";
 
@@ -23,7 +23,7 @@ export class AccessControlImpl implements AccessControl {
      */
     private _cachedEntity?: {id:string,data:any};
 
-    private actions = [..._actions];
+    private actions: Action[] = []
 
     get currentUser(){
         if(this._cachedEntity){
@@ -67,16 +67,34 @@ export class AccessControlImpl implements AccessControl {
         }
     }
 
-    async isAuthorized(actionName: string, token: string): Promise<boolean> {
+    async isAuthorizedToAcessEndpoint(action: Action, token: string): Promise<boolean> {
         const role = await this.getUserRole(token); 
         const customPerms = await this.getCustomUserPermissions(token);
-
-        if(role){
-            const permissions = getPermissionsFromGroup(role);
-            return this.authorizationChecker(actionName,permissions)
+        if(role && action){
+            const permissions = getPermissionsOnResourceType(role,action.resource);
+            
+            return this.authorizationChecker(action,[...permissions,...customPerms])
         } else {
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Token does not provide a valid user role.')
         }
+    }
+
+    isAuthorizedToOperateOnEntity(action:Action, entity: BaseEntity, userId:string, permissions: string[]): {permMatch:boolean,isOwn:boolean} {
+        const sharedPermissions = entity.sharedWith?.find(sw=>sw.user === userId)?.permissions;
+        const allPerms:string[] = [...permissions];
+        const isOwn = entity.createdBy === userId;
+
+        sharedPermissions?.forEach(perm=>{
+            if(!allPerms.includes(perm)){
+                allPerms.push(perm);
+            }
+        });
+    
+        return { 
+            permMatch : this.authorizationChecker(action, allPerms),
+            isOwn
+        };
+
     }
     getActionFromRequest(request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>): string {
         const requestPath = this.basePath + request.path;
@@ -98,8 +116,11 @@ export class AccessControlImpl implements AccessControl {
         this.actions.push(action);
     }
 
-    private authorizationChecker(actionName: string, userPermissions: string[]): boolean {
-        const action = this.actions.find(a=>a.name === actionName);
+    /**
+    * User must have all permissions in at least a 
+    * single group
+    */
+    private authorizationChecker(action: Action, userPermissions: string[]): boolean {
         if(action){
             return action.requiredPermissions.some((group)=>{
                 return group.every(p=> userPermissions.includes(p))
@@ -109,5 +130,6 @@ export class AccessControlImpl implements AccessControl {
         }
 
     }
+    
 
 }

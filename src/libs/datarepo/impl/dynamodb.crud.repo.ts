@@ -63,7 +63,7 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
     }
     findById(id: string): Promise<T> {
        const item = Object.assign( new this.modelConstructor(), {[this.partitionKey]: id});
-        
+
        return this.mapper.get(item)
         .then(d=>{
             return d as T
@@ -83,15 +83,15 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
                     indexName: query.useIndex,
                 } as QueryOptions;
                 
-                /** pagination */
-                // queryOpts.limit = page.size;
                 if(page.from && typeof page.from === 'string') {
                     queryOpts.startKey = {
                         [query.keyAttribName]: query.keyAttribValue as string,
                     }
 
-                    if( page.fromName ) {
-                        queryOpts.startKey[page.fromName] = page.from
+                    if( page.fromField ) {
+                        queryOpts.startKey[page.fromField] = page.from
+                    } else {
+                        
                     }
                 }
                 
@@ -107,7 +107,7 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
                 for await (const item of results) {
                     resPage.results.push(item as any);
                 }
-                resPage.count = results.count;
+                resPage.count = results.count
                 return Promise.resolve( resPage as Page<any>)
             }else{
                 throw new Error('DataRepo:DynamoDbCRUD:findPageByQuery: Table Non Existent or Not Ready')

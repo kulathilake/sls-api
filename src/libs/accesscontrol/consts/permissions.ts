@@ -1,48 +1,42 @@
-import { PermissionGroup } from "../types/acl.types";
+import { UserRolePermissions as UserRolePermission } from "../types/acl.types";
 
 export const ADMIN_CREATE_ANY = 'ADMIN_CREATE_ANY';
 export const ADMIN_VIEW_ANY = 'ADMIN_VIEW_ANY';
 export const ADMIN_UPDATE_ANY = 'ADMIN_UPDATE_ANY';
 export const ADMIN_REMOVE_ANY = 'ADMIN_REMOVE_ANY';
-export const CREATE_CREATOR_RESOURCE = 'CREATE_CREATOR_RESOURCE';
-export const UPDATE_CREATOR_RESOURCE = 'UPDATE_CREATOR_RESOURCE';
-export const REMOVE_CREATOR_RESOURCE = 'REMOVE_CREATOR_RESOURCE';
-export const VIEW_CREATOR_RESOURCE = 'VIEW_CREATOR_RESOURCE';
+export const VIEW_PUBLIC_RESOURCE = 'VIEW_PUBLIC_RESOURCE';
+export const VIEW_SHARED_RESOURCE = 'VIEW_SHARED_RESOURCE'
+export const VIEW_OWN_RESOURCE = 'VIEW_OWN_RESOURCE';
+export const UPDATE_OWN_RESOURCE = 'UPDATE_OWN_RESOURCE';
+export const REMOVE_OWN_RESOURCE = 'REMOVE_OWN_RESOURCE';
 
-const permissionGroups: { [s: string]: PermissionGroup } = {
+const userRolePermissions: { [s: string]: UserRolePermission } = {
     /** Role based permission groups */
     ADMIN: {
-        permissionScope: 'ALL',
-        permissions: [
-            ADMIN_CREATE_ANY, 
-            ADMIN_VIEW_ANY, 
-            ADMIN_UPDATE_ANY, 
-            ADMIN_REMOVE_ANY
-        ],
-        includeGroups: [],
-    },
-    CREATOR: {
-        permissionScope: 'SHARED_OR_OWN',
-        permissions: [],
-        includeGroups: [
-            'CREATOR_RESOURCE'
-        ]
-    },
-    CUSTOMER: {
-        permissionScope: 'OWN',
-        permissions: [],
-        includeGroups: []
+        resources: [
+            {
+                resourceType: '*',
+                permissions: [
+                    ADMIN_CREATE_ANY,
+                    ADMIN_VIEW_ANY,
+                    ADMIN_UPDATE_ANY,
+                    ADMIN_REMOVE_ANY
+                ]
+            }
+        ] 
     },
 
-    /** Feature based permission groups */
-    CREATOR_RESOURCE: {
-        permissions: [
-            CREATE_CREATOR_RESOURCE,
-            UPDATE_CREATOR_RESOURCE,
-            REMOVE_CREATOR_RESOURCE,
-            VIEW_CREATOR_RESOURCE,
-        ],
-        includeGroups: []
+    USER: {
+        resources: [
+            {
+                resourceType: 'user',
+                permissions: [
+                    VIEW_PUBLIC_RESOURCE,
+                    VIEW_OWN_RESOURCE,
+                    UPDATE_OWN_RESOURCE
+                ]
+            }
+        ]
     }
 
 }
@@ -54,33 +48,23 @@ const permissionGroups: { [s: string]: PermissionGroup } = {
  * @param groupName 
  * @returns 
  */
-export function getPermissionsFromGroup(groupName: string): string[] {
+export function getPermissionsOnResourceType(userRole: string, resource:string,): string[] {
     const perms: string[] = [];
-    const group = permissionGroups[groupName];
-    if (group) {
-        perms.push(...group.permissions);
-        if (group.includeGroups && group.includeGroups.length) {
-            group.includeGroups.forEach(grp => {
-                perms.push(...getPermissionsFromGroup(grp))
-            })
+    const rolePerms = userRolePermissions[userRole];
+    if (rolePerms) {
+        const wildCardPerms = rolePerms.resources.find(r => r.resourceType === '*');
+        if(wildCardPerms){
+            return wildCardPerms.permissions;
+        } else {
+            const perms = rolePerms.resources.find(r=>r.resourceType === resource)?.permissions;
+            if(perms){
+                return perms;
+            }else {
+                throw new Error('ACL:permissions:getPermissionsFromGroup: No Perms on Resource Type');
+            }
         }
         return perms;
     } else {
-        throw new Error('ACL:permissions:getPermissionsFromGroup: Invalid Group Name');
-    }
-}
-
-/**
- * Gets the scope through which any permission granted to a role is applicable
- * based on resource ownership.
- * @param role 
- * @returns Permission Scope
- */
-export function getPermissionScopeForRole(role:string): 'OWN' | 'ALL' | 'SHARED_OR_OWN' {
-    const group = permissionGroups[role];
-    if(group && group.permissionScope) {
-        return group.permissionScope;
-    }else{
-        throw new Error('ACL:permissions:getPermissionScopeForRole: Invalid role or undefined permission scope')
+        throw new Error('ACL:permissions:getPermissionsFromGroup: Invalid User Role');
     }
 }

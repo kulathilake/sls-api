@@ -3,6 +3,7 @@
  */
 
 import { Request } from "express";
+import { BaseEntity } from "../../../common/common.types";
 import { Action } from "../types/acl.types";
 
 export interface AccessControl {
@@ -26,12 +27,22 @@ export interface AccessControl {
     /**
      * Single method that will perform user fetching
      * and checking if the user has ample permissions
-     * to execute a given action.
+     * to execute a given action on an API Endpoint.
+     * This will not check entity level permissions.
      * @param action 
      * @param token
      */
-    isAuthorized(action:string, token:string):Promise<boolean>;
+    isAuthorizedToAcessEndpoint(action:Action, token:string):Promise<boolean>;
 
+    /**
+     * Checks if a given operation can be performed on
+     * an entity by a user identified by a userId;
+     * @param entity entity to operate on
+     * @param userId userId to check against
+     * @param permissions permissions user has
+     */
+    isAuthorizedToOperateOnEntity(action:Action, entity:BaseEntity, userId:string, permissions:string[]):{permMatch:boolean, isOwn:boolean};
+    
     /**
      * Returns the matching action for a given express request;
      * @param request 

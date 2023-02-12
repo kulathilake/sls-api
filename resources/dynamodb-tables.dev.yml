@@ -21,6 +21,8 @@ Resources:
           KeySchema:
             - AttributeName: isRemoved
               KeyType: HASH
+            - AttributeName: userid
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:

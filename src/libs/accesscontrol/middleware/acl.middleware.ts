@@ -18,7 +18,7 @@ export async function accesscontrol(req:Request,res:Response, next:NextFunction)
         const token = req.headers['authorization'];
         const action = aclSVc.getActionFromRequest(req);
         if(token){
-            isAllowed = await aclSVc.isAuthorized(action,token)
+            isAllowed = await aclSVc.isAuthorizedToAcessEndpoint(action,token)
         } else {
             isAllowed = aclSVc.isActionAllowedWithNoToken(action);
         }
