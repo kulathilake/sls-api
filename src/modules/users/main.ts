@@ -1,6 +1,6 @@
 import Container from "typedi";
 import {useCustomExpressApp } from "../../libs/custom-xprs-app";
-import { User } from "../../common/models/user.model";
+import { User } from "./user.model";
 import { UserService } from "./user.service";
 const {app,handler:_handler} = useCustomExpressApp('/user');
 const service = Container.get(UserService);

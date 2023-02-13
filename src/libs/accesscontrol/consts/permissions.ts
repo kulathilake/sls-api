@@ -1,4 +1,4 @@
-import { UserRolePermissions as UserRolePermission } from "../../../common/types/UserRolePermissions";
+import { UserRolePermissions as UserRolePermission } from "../../../common/types/UserRoles";
 
 export const ADMIN_CREATE_ANY = 'ADMIN_CREATE_ANY';
 export const ADMIN_VIEW_ANY = 'ADMIN_VIEW_ANY';
