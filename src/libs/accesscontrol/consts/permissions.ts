@@ -1,4 +1,4 @@
-import { UserRolePermissions as UserRolePermission } from "../types/acl.types";
+import { UserRolePermissions as UserRolePermission } from "../../../common/types/UserRolePermissions";
 
 export const ADMIN_CREATE_ANY = 'ADMIN_CREATE_ANY';
 export const ADMIN_VIEW_ANY = 'ADMIN_VIEW_ANY';

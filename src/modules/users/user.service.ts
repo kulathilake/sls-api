@@ -1,6 +1,6 @@
 import Container, { Inject, Service } from "typedi";
 import { Page, PageMeta } from "../../common/common.types";
-import { User } from "./user.model";
+import { User } from "../../common/models/user.model";
 import { UserRepo } from "./user.repo";
 
 @Service()

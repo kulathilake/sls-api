@@ -4,7 +4,6 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { DataMapper, QueryOptions } from "@aws/dynamodb-data-mapper";
 import {ConditionExpression} from "@aws/dynamodb-expressions"
 import { Service } from "typedi";
-import { stringMap } from "aws-sdk/clients/backup";
 
 const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || 'http://localhost:8000';
 const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';

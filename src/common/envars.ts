@@ -6,6 +6,8 @@
 /** common */
 export const STAGE = process.env.STAGE || 'dev'
 
+export const AWS_REGION = process.env.AWS_REGION || 'ap-southeast-1';
+
 /** users */
 export const USER_TABLE = process.env.USER_TABLE || `${STAGE}-user-table`;
 

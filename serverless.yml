@@ -1,4 +1,4 @@
-service: aws-node-express-api-project
+service: only-so-much-life-core
 frameworkVersion: '3'
 
 provider:
@@ -16,6 +16,12 @@ functions:
       - httpApi:
           method: '*'
           path: '/user/{any+}'
+  authentication:
+    handler: src/modules/authentication/main.handler
+    events:
+      - httpApi:
+          method: '*'
+          path: '/auth/{any+}'
 
 custom:
   stage: ${sls:stage, self:provider.stage}

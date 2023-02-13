@@ -6,9 +6,3 @@ export type Action = {
     requiredPermissions: string[][]
 }
 
-export type UserRolePermissions = {
-    resources: {
-        resourceType: string | '*'
-        permissions: string[]
-    }[]
-}

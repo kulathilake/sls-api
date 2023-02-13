@@ -9,14 +9,21 @@ import Container from 'typedi';
 import 'reflect-metadata';
 import { AccessControlImpl } from '../accesscontrol/service/AccessControl.service';
 
-
-export function useCustomExpressApp(basePath:string) {
+/**
+ * Creates a custom version of Express app and returns a serverless wrapped
+ * app with the original app
+ * @param basePath base path of the app
+ * @param useACL use Access Control Middleware. Set to false when using API Gateway authorizers
+ * @returns {app: ExpressApp, handler: Serverless Express handler}
+ */
+export function useCustomExpressApp(basePath:string, useACL=true) {
     Container.set('BASE_PATH',basePath);
     const acl = Container.get(AccessControlImpl);
     const app = express();
     app.use(bodyparser.json());
-    app.use(accesscontrol);
-
+    if(useACL){
+        app.use(accesscontrol);
+    }
     return {
         app:{
             ...app,
