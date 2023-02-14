@@ -63,7 +63,11 @@ export class BaseEntity {
         defaultProvider: ()=> new Date()
     })
     createdOn?: Date;
+    @attribute()
     updatedBy?: string;
+    @attribute({
+        type: 'Date',
+    })
     updatedOn?: Date;
     isRemoved?: boolean;
     removedOn?: Date;

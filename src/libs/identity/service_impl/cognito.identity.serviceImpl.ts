@@ -26,7 +26,6 @@ export class CognitoIdentitySvc implements IdentityService{
                 if(err){
                     rej(err);
                 }else{
-                    console.log(data);
                     res(true)
                 }
             })

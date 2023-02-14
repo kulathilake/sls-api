@@ -1,5 +1,6 @@
 import Container, { Inject, Service } from "typedi";
 import { Page, PageMeta } from "../../common/common.types";
+import { UpdateUserDto } from "./dto/UpdateUser.dto";
 import { User } from "./user.model";
 import { UserRepo } from "./user.repo";
 
@@ -52,12 +53,8 @@ export class UserService {
         })
     }
 
-    updateUser(id:string, data: User):Promise<User> {
-        const pld = Object.assign(new User(),{
-            ...data,
-            userid: id,
-        })
-        return this.repo.update(pld);
+    updateUser(id:string, data: UpdateUserDto):Promise<User> {
+        return this.repo.update(id,data);
     }
     
 }
