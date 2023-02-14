@@ -6,7 +6,7 @@ import { Inject, Service } from "typedi";
 import { BaseEntity } from "../../../common/common.types";
 import { IdentityAttribs, IdentityService } from "../../identity/identity.service";
 import { CognitoIdentitySvc } from "../../identity/service_impl/cognito.identity.serviceImpl";
-import { getPermissionsOnResourceType } from "../consts/permissions";
+import { getPermissionOnRole, getPermissionsOnResourceType } from "../consts/permissions";
 import { Action } from "../types/acl.types";
 import { AccessControl } from "./IAccessControl.service";
 
@@ -17,7 +17,7 @@ export class AccessControlImpl implements AccessControl {
     basePath!: string;
 
     @Inject('IDENTITY_SERVICE')
-    authSvc!: IdentityService
+    idSvc!: IdentityService
 
     /**
      * Cache a read entity for future use
@@ -41,9 +41,9 @@ export class AccessControlImpl implements AccessControl {
             if(process.env.IS_OFFLINE && token.length === 0){
                 return Promise.resolve('ADMIN')
             }else {
-                return this.authSvc.verifyToken(token)
+                return this.idSvc.verifyToken(token)
                 .then(res => {
-                    this.authSvc.currentUser = res;
+                    this.setAuthUserAttribs(res);
                     if(res?.role) return res.role;
                     throw new Error('ACL:getUserRole:Auth did not return role');
                 })
@@ -117,23 +117,11 @@ export class AccessControlImpl implements AccessControl {
     * single group
     */
     private authorizationChecker(action: Action, userPermissions: string[]): boolean {
-        let permGroupMatched: any;
         if(action){
             if(action.requiredPermissions.length === 0) return true;
             const authMatch = action.requiredPermissions.some((group)=>{
                 const match = group.every(p=> userPermissions.includes(p));
                 if(match) {
-                    // sets the current user's permission scope on this resource.
-                    if(this.authSvc.currentUser){
-                        this.authSvc.currentUser.permissions = {
-                            resources: [
-                                {
-                                    resourceType: action.resource,
-                                    permissions: group
-                                }
-                            ]
-                        };
-                    }
                     return true;
                 }
             });
@@ -169,6 +157,13 @@ export class AccessControlImpl implements AccessControl {
         } else {
             return null;
         }
+    }
+
+    private setAuthUserAttribs(attribs:IdentityAttribs) {
+        if(attribs.permissions ===undefined){
+            attribs.permissions = getPermissionOnRole(attribs.role)
+        }
+        this.idSvc.currentUser = attribs;
     }
     
 

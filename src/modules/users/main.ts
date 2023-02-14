@@ -24,9 +24,6 @@ app.get('/',(req,res,next)=>{
         fromField: query.fromField
     }) 
     .then(d=>{
-        console.log(idSvc.currentUser);
-        console.log(idSvc.currentUser?.permissions)
-        console.log(idSvc.currentUser?.permissions?.resources)
         res.json(d);
     })
     .catch(e=>{
