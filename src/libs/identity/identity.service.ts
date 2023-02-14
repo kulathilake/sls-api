@@ -1,6 +1,14 @@
 import { Roles, UserRolePermissions } from "../../common/types/UserRoles";
 
 export interface IdentityService {
+
+    /**
+     * Signs up a new user with email & password
+     * @param email 
+     * @param password 
+     * @param role 
+     */
+    signUpWithEmail(email:string,password:string,role:Roles):Promise<IdentityAttribs>;
     /**
      * decodes a JWT token to obtain token claims.
      * @param token 

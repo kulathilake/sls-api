@@ -13,6 +13,32 @@ let svc: TestableCognitoIdentitySVC;
 describe('Cognito Identity Service Test Suite', () => {
 
     /**
+     * Signup With Email
+     */
+    describe('method:signUpWithEmail', () => {
+        let tokenMap: {[token:string]:IdentityAttribs} = {
+            token1: {
+                userId: 'userId',
+                email: 'user@domain.com',
+                role: Roles.ADMIN,
+            }
+        }
+        beforeAll(()=>{
+            svc = new TestableCognitoIdentitySVC();
+        })
+
+        it('Should throw error when invalid user role is passed', async () => {
+            
+        })
+        it('Should throw error when an sign-up fails.', async () => {
+        })
+
+        afterAll(()=>{
+            jest.clearAllMocks();
+        })
+    })
+
+    /**
      * Token Verification
      */
     describe('method:getClaimsFromAccessToken', () => {

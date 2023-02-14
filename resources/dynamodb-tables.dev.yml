@@ -28,46 +28,4 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
-  # MockTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     TableName: ${self:custom.names.mockTable}
-  #     AttributeDefinitions:
-  #       - AttributeName: id
-  #         AttributeType: S
-  #       - AttributeName: name
-  #         AttributeType: S
-  #       - AttributeName: age
-  #         AttributeType: N
-  #       - AttributeName: isRemoved
-  #         AttributeType: B
-  #     KeySchema:
-  #       - AttributeName: uid
-  #         KeyType: HASH
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 5
-  #       WriteCapacityUnits: 5
-  #     GlobalSecondaryIndexes:
-  #       - IndexName: nameIndex
-  #         KeySchema:
-  #           - AttributeName: isRemoved
-  #             KeyType: HASH
-  #           - AttributeName: name
-  #             KeyType: RANGE
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 5
-  #           WriteCapacityUnits: 5
-  #       - IndexName: ageIndex
-  #         KeySchema:
-  #           - AttributeName: isRemoved
-  #             KeyType: HASH
-  #           - AttributeName: age
-  #             KeyType: RANGE
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #             ReadCapacityUnits: 5
-  #             WriteCapacityUnits: 5
               

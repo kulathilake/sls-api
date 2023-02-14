@@ -1,7 +1,7 @@
 
 export enum Roles {
-    ADMIN,
-    REGULAR
+    ADMIN="ADMIN",
+    REGULAR="REGULAR"
 }
 
 export type UserRolePermissions = {

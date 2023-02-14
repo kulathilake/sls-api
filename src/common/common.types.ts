@@ -1,3 +1,5 @@
+import { attribute } from "@aws/dynamodb-data-mapper-annotations";
+
 /**
  * A representation of time in terms of Days, hours, mins and seconds.
  */
@@ -54,7 +56,12 @@ export type Sort = {
  * common base entity
  */
 export class BaseEntity {
+    @attribute()
     createdBy?: string;
+    @attribute({
+        type: 'Date',
+        defaultProvider: ()=> new Date()
+    })
     createdOn?: Date;
     updatedBy?: string;
     updatedOn?: Date;

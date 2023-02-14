@@ -22,11 +22,17 @@ const userRolePermissions: { [s: string]: UserRolePermission } = {
                     ADMIN_UPDATE_ANY,
                     ADMIN_REMOVE_ANY
                 ]
+            },
+            {
+                resourceType: 'identity',
+                permissions: [
+
+                ]
             }
         ] 
     },
 
-    USER: {
+    REGULAR: {
         resources: [
             {
                 resourceType: 'user',
@@ -67,4 +73,10 @@ export function getPermissionsOnResourceType(userRole: string, resource:string,)
     } else {
         throw new Error('ACL:permissions:getPermissionsFromGroup: Invalid User Role');
     }
+}
+
+export function getPermissionOnRole(userRole: string): UserRolePermission {
+    const role = userRolePermissions[userRole];
+    if(role) return role;
+    throw new Error('ACL:permissions:getPermissionOnRole: Invalid User Role')
 }

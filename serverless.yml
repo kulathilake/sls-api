@@ -6,8 +6,11 @@ provider:
   runtime: nodejs18.x
   region: ap-southeast-1
   environment:
-    MOCK_TABLE_NAME: ${self:custom.names.mockTable}
     USER_TABLE: ${self:custom.names.userTable}
+    USER_POOL_ID: 
+      Ref: UserPool
+    USER_POOL_CLIENT_ID: 3njpo751l22c04j8elpu80384t
+      # Ref: UserClient
 
 functions:
   user:
@@ -41,12 +44,14 @@ custom:
       pattern: './\*_/_.(js|ts)'
   # Custom Names to be used in each stage. 
   names:
-    mockTable: ${sls:stage}-mock_table
-    userTable: ${sls:stage}-user-table
+    userTable: ${sls:stage}-users-table
+    userPool: ${sls:stage}-user-pool
+    userPoolClient: ${sls:stage}-user-pool-client
 
 resources:
   # DynamoDB
   - ${file(resources/dynamodb-tables.${sls:stage}.yml)}
+  - ${file(resources/cognito-pool.${sls:stage}.yml)}
 
 plugins:
   - serverless-esbuild

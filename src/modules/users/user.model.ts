@@ -12,6 +12,9 @@ export class User extends BaseEntity {
     userid?:String;
 
     @attribute()
+    email?: string;
+
+    @attribute()
     firstName?: string;
 
     @attribute({
