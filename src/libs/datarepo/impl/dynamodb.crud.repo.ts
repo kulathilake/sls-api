@@ -1,8 +1,10 @@
 import { DataMapper, QueryOptions } from "@aws/dynamodb-data-mapper";
 import { ConditionExpression } from "@aws/dynamodb-expressions";
 import DynamoDB from "aws-sdk/clients/dynamodb";
-import { Service } from "typedi";
+import { param } from "express-validator";
+import { Inject, Service } from "typedi";
 import { Page, PageMeta } from "../../../common/common.types";
+import { IdentityService } from "../../identity/identity.service";
 import { CRUDRepo } from "../crud.repo";
 
 const LOCAL_DYNAMODB_ENDPOINT = process.env.LOCAL_DYNAMODB_ENDPOINT || "http://localhost:8000";
@@ -13,6 +15,20 @@ const AWS_REGION = process.env.AWS_REGION || "ap-southeast-1";
  */
 @Service()
 export class DynamodbCRUD<T, C, U> implements CRUDRepo<T, C, U>{
+    @Inject("IDENTITY_SERVICE")
+    idSvc!: IdentityService;
+
+    static getStringToBooleanHashKeyConfig(useDefaultProvider=true) {
+        const param =  {
+            type: "Custom",
+            marshall: (a: any) => ({ S: String(a) }),
+            unmarshall: (v: any) => (v.S === "true"),
+        } as any
+        if(useDefaultProvider) {
+            param["defaultProvider"] =  () => false;
+        }
+        return param
+    }
     protected dynamodb: DynamoDB;
     protected mapper: DataMapper;
     protected partitionKey: string;
@@ -59,36 +75,43 @@ export class DynamodbCRUD<T, C, U> implements CRUDRepo<T, C, U>{
     async update(id: string, data: U): Promise<T> {
 
         try {
-            if ((data as any)[this.partitionKey]){
+            if ((data as any)[this.partitionKey]) {
                 delete (data as any)[this.partitionKey];
             }
-            const currEntity = await this.findById(id); // TODO: remove this extra query.
+            let currEntity:T;
+            try {
+                currEntity = await this.findById(id); // TODO: remove this extra query.                
+            } catch (error) {
+                throw new Error("Entity does not exist")
+            }
+           
             const updateFields = {
                 updatedOn: new Date(),
-                updatedBy: "?",
+                updatedBy: this.idSvc.currentUser?.userId,
             };
-            const payload = Object.assign(new this.modelConstructor(), {...currEntity, ...data, ...updateFields});
-            return this.mapper.update({
+            const payload = Object.assign(new this.modelConstructor(), { ...currEntity, ...data, ...updateFields });
+            return this.mapper.put({
                 item: payload,
-            }, {
-                onMissing: "skip",
-                condition: {
-                    type: "Equals",
-                    subject: this.partitionKey,
-                    object: id,
-                },
             })
                 .then((d) => {
                     return { d } as T;
-                });
+                })
+                .catch(e=>{
+                    throw e;
+                })
         } catch (error) {
-            throw new Error("DataRepo:DynamoDbCRUD:Update: Unknown Error");
+            throw new Error(`DataRepo:DynamoDbCRUD:Update: ${(error as any).message}`);
 
         }
     }
     findById(id: string): Promise<T> {
         const item = Object.assign(new this.modelConstructor(), { [this.partitionKey]: id });
-
+        
+        Object.keys(item).forEach(key=>{
+            if(key !== this.partitionKey){
+                item[key] = null
+            }
+        })
         return this.mapper.get(item)
             .then((d) => {
                 return d as T;
@@ -125,7 +148,11 @@ export class DynamodbCRUD<T, C, U> implements CRUDRepo<T, C, U>{
                 }
 
                 const q = { [query.keyAttribName]: query.keyAttribValue };
-
+                if(query.secondaryAttribs) {
+                    query.secondaryAttribs.forEach(attrb=>{
+                        q[attrb.Name] = attrb.Value
+                    })
+                }
                 /** query execution */
                 const results = this.mapper.query(this.modelConstructor, q, queryOpts);
                 for await (const item of results) {
@@ -163,4 +190,5 @@ export interface DynamoDbQuery {
     keyAttribName: string;
     keyAttribValue: string | number | boolean;
     expressionAttribs?: ConditionExpression;
+    secondaryAttribs?: {Name:string,Value:string|number|boolean}[]
 }

@@ -28,4 +28,41 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
-              
+  CycleTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.names.cycleTable}
+        AttributeDefinitions:
+          - AttributeName: cycleId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: isActive
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cycleId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: currentUserCycles
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: activeCycles
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: isActive
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5

@@ -7,10 +7,11 @@ provider:
   region: ap-southeast-1
   environment:
     USER_TABLE: ${self:custom.names.userTable}
-    USER_POOL_ID:
-      Ref: UserPool
-    USER_POOL_CLIENT_ID:
-      Ref: UserClient
+    USER_POOL_ID: ap-southeast-1_2m8TZfqyD
+      # Ref: UserPool
+    USER_POOL_CLIENT_ID: 3njpo751l22c04j8elpu80384t
+      # Ref: UserClient
+    CYCLE_TABLE: ${self:custom.names.cycleTable}
 
 functions:
   user:
@@ -25,6 +26,12 @@ functions:
       - httpApi:
           method: '*'
           path: '/auth/{any+}'
+  cycles:
+    handler: src/modules/cycles/main.handler
+    events:
+      - httpApi:
+          method: '*'
+          path: '/cycles/{any+}'
 
 custom:
   stage: ${sls:stage, self:provider.stage}
@@ -47,6 +54,7 @@ custom:
     userTable: ${sls:stage}-users-table
     userPool: ${sls:stage}-user-pool
     userPoolClient: ${sls:stage}-user-pool-client
+    cycleTable: ${sls:stage}-cycle-table
 
 resources:
   # DynamoDB
