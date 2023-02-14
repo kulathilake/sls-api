@@ -41,7 +41,6 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
         this.modelConstructor = modelConstructor;
         this.tableReady = this.ensureTable(modelConstructor);
     }
-
     async create(create: C): Promise<T> {
         try{
             if(await this.tableReady) {
@@ -58,7 +57,17 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
         }
     }
     update(data: U): Promise<T> {
-        throw new Error("Method not implemented.");
+        try {
+            return this.mapper.update({
+                item: data
+            })
+            .then(d=>{
+                return {d} as T
+            })
+        } catch (error) {
+            throw new Error('DataRepo:DynamoDbCRUD:Update: Unknown Error')
+            
+        }
     }
     findById(id: string): Promise<T> {
        const item = Object.assign( new this.modelConstructor(), {[this.partitionKey]: id});
@@ -70,7 +79,6 @@ export class DynamodbCRUD<T,C,U> implements CRUDRepo<T,C,U>{
         .catch(e => {
             throw new Error(`DataRepo:DynamoDbCRUD:FindById:${e.message || 'Unknown Error'}`)
         })
-
     }
     async findPageByQuery(query: DynamoDbQuery, page: PageMeta<T>): Promise<Page<T>> {
         try {

@@ -9,6 +9,13 @@ export interface IdentityService {
      * @param role 
      */
     signUpWithEmail(email:string,password:string,role:Roles):Promise<IdentityAttribs>;
+
+    /**
+     * verifies a user account
+     * @param username 
+     * @param code 
+     */
+    verifyEmailConfirmationCode(username:string, code:string):Promise<boolean>;
     /**
      * decodes a JWT token to obtain token claims.
      * @param token 

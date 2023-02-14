@@ -32,5 +32,8 @@ export class User extends BaseEntity {
     isRemoved?: boolean;
 
     @attribute()
+    isEmailVerified?: boolean;
+    
+    @attribute()
     permissions?:UserRolePermissions
 }

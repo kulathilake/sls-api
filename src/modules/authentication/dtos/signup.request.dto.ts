@@ -1,4 +1,4 @@
-import { Roles } from "../../common/types/UserRoles";
+import { Roles } from "../../../common/types/UserRoles";
 
 export interface SignUpRequest {
     email: string,

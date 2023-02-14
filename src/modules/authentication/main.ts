@@ -2,9 +2,10 @@ import Container from "typedi";
 import { CognitoIdentitySvc } from "../../libs/identity/service_impl/cognito.identity.serviceImpl";
 import { useCustomExpressApp } from "../../libs/custom-xprs-app";
 import { UserService } from "../users/user.service";
-import { SignUpRequest } from "./signup.request.dto";
+import { SignUpRequest } from "./dtos/signup.request.dto";
 import { Roles } from "../../common/types/UserRoles";
 import { User } from "../users/user.model";
+import { EmailConfirmRequest } from "./dtos/emailConfirm.request.dto";
 
 /**
  * Endpoint exposing authentication tasks
@@ -42,6 +43,35 @@ app.post('/signup',async (req,res,next)=>{
     }
 
 });
+
+app.post('/:id/confirm', async (req,res,next) => {
+    try {
+        const userId = req.params.id;
+        const {email,code} = req.body as EmailConfirmRequest;
+        const confirmRes = await authSVC.verifyEmailConfirmationCode(email,code)
+        if(confirmRes){
+            const updateRes = await userSVC.updateUser(userId,{isEmailVerified:true});
+            if(updateRes){
+                res.status(200).send('OK');
+            }else{
+                const e = new Error("Authentication:Confirm:User Confirmed but failed to persist status");
+                res.status(500).json({
+                    error: e.message
+                })
+            }
+        } else {
+            const e = new Error('Authentication:Confirm:Unknown Error Failed to Confirm');
+            res.status(500).json({
+                error: e.message
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            error: `Authentication:Confirm:${(error as any).message}`
+        })
+    }
+})
 
 app.post('/signin',()=>{
 

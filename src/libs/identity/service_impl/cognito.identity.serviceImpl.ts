@@ -16,6 +16,22 @@ export class CognitoIdentitySvc implements IdentityService{
             region: AWS_REGION
         });
     }
+    verifyEmailConfirmationCode(email: string, code: string): Promise<boolean> {
+        return new Promise((res,rej)=>{
+            this.client.confirmSignUp({
+                ClientId: USER_POOL_CLIENT_ID,
+                Username: email,
+                ConfirmationCode: code
+            }).send((err,data)=>{
+                if(err){
+                    rej(err);
+                }else{
+                    console.log(data);
+                    res(true)
+                }
+            })
+        })
+    }
     
     signUpWithEmail(email: string, password: string, role: Roles): Promise<IdentityAttribs> {
         const permissions = getPermissionOnRole(role);
@@ -55,7 +71,7 @@ export class CognitoIdentitySvc implements IdentityService{
                     rej(err);
                 }else {
                     res({
-                        userId: data.Username, //TODO is there a way to get the UserSub insted? 
+                        userId: data.UserAttributes.find(a=>a.Name==='sub'), 
                         email: data.UserAttributes.find(a=>a.Name==='email')?.Value,
                         role: data.UserAttributes.find(a=>a.Name==='custom:role')?.Value,
                     } as IdentityAttribs)
