@@ -1,0 +1,31 @@
+Resources:
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.names.userTable}
+      AttributeDefinitions:
+        - AttributeName: userid
+          AttributeType: S
+        - AttributeName: isRemoved
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userid
+          KeyType: HASH
+        - AttributeName: isRemoved
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+        - IndexName: activeUsers
+          KeySchema:
+            - AttributeName: isRemoved
+              KeyType: HASH
+            - AttributeName: userid
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+              
