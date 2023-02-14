@@ -12,7 +12,7 @@ import { AccessControlImpl } from "../service/AccessControl.service";
  */
 export async function accesscontrol(req: Request, res: Response, next: NextFunction) {
     const aclSVc = Container.get(AccessControlImpl);
-
+    
     try {
         let isAllowed: boolean;
         const token = req.headers["authorization"]?.replace("Bearer ", "");
@@ -22,6 +22,7 @@ export async function accesscontrol(req: Request, res: Response, next: NextFunct
         } else {
             isAllowed = aclSVc.isActionAllowedWithNoToken(action.name);
         }
+        // isAllowed = true;
         if (isAllowed){
             next();
         }else{

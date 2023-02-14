@@ -9,6 +9,7 @@ export const VIEW_SHARED_RESOURCE = "VIEW_SHARED_RESOURCE";
 export const VIEW_OWN_RESOURCE = "VIEW_OWN_RESOURCE";
 export const UPDATE_OWN_RESOURCE = "UPDATE_OWN_RESOURCE";
 export const REMOVE_OWN_RESOURCE = "REMOVE_OWN_RESOURCE";
+export const CREATE_OWN_RESOURCE = "CREATE_OWN_RESOURCE";
 
 const userRolePermissions: { [s: string]: UserRolePermission } = {
     /** Role based permission groups */
@@ -25,10 +26,12 @@ const userRolePermissions: { [s: string]: UserRolePermission } = {
             },
             {
                 resourceType: "identity",
-                permissions: [
-
-                ],
+                permissions: [],
             },
+            {
+                resourceType: 'cycle',
+                permissions: []
+            }
         ],
     },
 
@@ -42,6 +45,14 @@ const userRolePermissions: { [s: string]: UserRolePermission } = {
                     UPDATE_OWN_RESOURCE,
                 ],
             },
+            {
+                resourceType: 'cycle',
+                permissions: [
+                    CREATE_OWN_RESOURCE,
+                    VIEW_OWN_RESOURCE,
+                    UPDATE_OWN_RESOURCE
+                ]
+            }
         ],
     },
 

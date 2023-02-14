@@ -1,7 +1,7 @@
 {
-  "name": "sls-api",
+  "name": "onlysomuch-life-core-services",
   "version": "1.0.0",
-  "description": "serverless based boilerplate backend with built in ACL and Auth",
+  "description": "core backend services for onlysomuch.life habit tracking application",
   "scripts": {
     "dev": "sls offline start",
     "test": "jest -c",
