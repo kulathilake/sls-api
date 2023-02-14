@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { IdentityAttribs, IdentityService, OAuthProvider, VerificationCodePurpose } from "../identity.service";
 import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { AWS_REGION, USER_POOL_CLIENT_ID } from "../../../common/envars";
+import { AWS_REGION, USER_POOL_CLIENT_ID, USER_POOL_ID } from "../../../common/envars";
 import { Roles } from "../../../common/types/UserRoles";
 import { getPermissionOnRole } from "../../accesscontrol/consts/permissions";
 
@@ -54,6 +54,32 @@ export class CognitoIdentitySvc implements IdentityService{
                         email: email,
                         permissions: permissions
                     })
+                }
+            })
+        })
+    }
+
+    signInWithEmail(email: string, password: string): Promise<{ accessToken: string; refreshToken: string,}> {
+        return new Promise((res,rej)=>{
+            this.client.adminInitiateAuth({
+                AuthFlow:'ADMIN_NO_SRP_AUTH',
+                ClientId: USER_POOL_CLIENT_ID,
+                UserPoolId: USER_POOL_ID,
+                AuthParameters: {
+                    'USERNAME': email,
+                    'PASSWORD': password
+                }
+            }).send((err,data)=>{
+                if(err){
+                    rej(err);
+                }else if (data?.AuthenticationResult){
+                    const {AccessToken,RefreshToken} = data.AuthenticationResult
+                    if(AccessToken && RefreshToken){
+                        res({
+                            accessToken: AccessToken,
+                            refreshToken: RefreshToken
+                        })
+                    }
                 }
             })
         })

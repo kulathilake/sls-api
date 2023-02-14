@@ -6,6 +6,7 @@ import { SignUpRequest } from "./dtos/signup.request.dto";
 import { Roles } from "../../common/types/UserRoles";
 import { User } from "../users/user.model";
 import { EmailConfirmRequest } from "./dtos/emailConfirm.request.dto";
+import { EmailSignInRequest } from "./dtos/EmailSignIn.request.dto";
 
 /**
  * Endpoint exposing authentication tasks
@@ -73,8 +74,16 @@ app.post('/:id/confirm', async (req,res,next) => {
     }
 })
 
-app.post('/signin',()=>{
-
+app.post('/signin',async (req,res)=>{
+    try {
+        const {email,password} = req.body as EmailSignInRequest;
+        const signInRes = await authSVC.signInWithEmail(email,password);
+        res.json(signInRes);
+    } catch (error) {
+        res.status(500).json({
+            error: `Authentication:SignIn:${(error as any).message}`
+        })
+    }
 });
 
 

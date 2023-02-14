@@ -7,8 +7,8 @@ provider:
   region: ap-southeast-1
   environment:
     USER_TABLE: ${self:custom.names.userTable}
-    USER_POOL_ID: 
-      Ref: UserPool
+    USER_POOL_ID: ap-southeast-1_2m8TZfqyD
+      # Ref: UserPool
     USER_POOL_CLIENT_ID: 3njpo751l22c04j8elpu80384t
       # Ref: UserClient
 

@@ -11,6 +11,13 @@ export interface IdentityService {
     signUpWithEmail(email:string,password:string,role:Roles):Promise<IdentityAttribs>;
 
     /**
+     * Returns access and refresh tokens for a valid email 
+     * password combination
+     * @param email 
+     * @param password 
+     */
+    signInWithEmail(email:string,password:string):Promise<{accessToken:string, refreshToken: string}>;
+    /**
      * verifies a user account
      * @param username 
      * @param code 
