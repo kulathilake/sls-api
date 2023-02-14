@@ -1,4 +1,4 @@
 export interface EmailSignInRequest {
-    email:string;
+    email: string;
     password: string;
 }

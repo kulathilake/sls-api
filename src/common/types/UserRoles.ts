@@ -1,12 +1,12 @@
 
 export enum Roles {
-    ADMIN="ADMIN",
-    REGULAR="REGULAR"
+    ADMIN= "ADMIN",
+    REGULAR= "REGULAR",
 }
 
 export type UserRolePermissions = {
-    resources: {
-        resourceType: string | '*';
+    resources: Array<{
+        resourceType: string | "*";
         permissions: string[];
-    }[];
+    }>;
 };

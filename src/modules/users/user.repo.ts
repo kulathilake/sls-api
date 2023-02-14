@@ -4,20 +4,20 @@ import { UpdateUserDto } from "./dto/UpdateUser.dto";
 import { User } from "./user.model";
 
 @Service()
-export class UserRepo extends DynamodbCRUD<User,User,UpdateUserDto>{
+export class UserRepo extends DynamodbCRUD<User, User, UpdateUserDto>{
     constructor(){
-        super(User,'userid');
-    }  
-    
+        super(User, "userid");
+    }
+
     create(create: User): Promise<User> {
         return super.create(create);
     }
 
     async update(id: string, data: UpdateUserDto): Promise<User> {
         try {
-            return super.update(id,data);
+            return super.update(id, data);
         } catch (error) {
-            throw new Error(`User:Repo:update:${(error as any).message}`)
+            throw new Error(`User:Repo:update:${(error as any).message}`);
         }
 
     }

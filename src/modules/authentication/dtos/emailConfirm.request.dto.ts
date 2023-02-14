@@ -1,4 +1,4 @@
 export interface EmailConfirmRequest {
     email: string;
-    code: string
+    code: string;
 }

@@ -4,5 +4,4 @@ export type Action = {
     method: string;
     resource: string;
     requiredPermissions: string[][]
-}
-
+};
