@@ -3,44 +3,63 @@
  */
 
 import { Request } from "express";
+import { BaseEntity } from "../../../common/common.types";
+import { IdentityAttribs } from "../../identity/identity.service";
+import { Action } from "../types/acl.types";
 
 export interface AccessControl {
     /**
      * obtains the role of the user identified by access token
-     * @param token 
+     * @param token
      */
-    getUserRole(token:string):Promise<string>;
+    getUserRole(token: string): Promise<string>;
     /**
      * obtains the custom permissions granted to the user identified
      * by access token.
-     * @param token 
+     * @param token
      */
-    getCustomUserPermissions(token:string):Promise<string[]>
+    getCustomUserPermissions(token: string): Promise<string[]>;
     /**
-     * is current 
-     * @param action 
-     * @param roles 
+     * is current
+     * @param action
+     * @param roles
      */
 
     /**
      * Single method that will perform user fetching
      * and checking if the user has ample permissions
-     * to execute a given action.
-     * @param action 
+     * to execute a given action on an API Endpoint.
+     * This will not check entity level permissions.
+     * @param action
      * @param token
      */
-    isAuthorized(action:string, token:string):Promise<boolean>;
+    isAuthorizedToAcessEndpoint(action: Action, token: string): Promise<boolean>;
+
+    /**
+     * Checks if a given operation can be performed on
+     * an entity by a user identified by a userId;
+     * @param entity entity to operate on
+     * @param userId userId to check against
+     * @param permissions permissions user has
+     */
+    isAuthorizedToOperateOnEntity(action: Action, entity: BaseEntity, userId: string, permissions: string[]): {permMatch: boolean, isOwn: boolean};
 
     /**
      * Returns the matching action for a given express request;
-     * @param request 
+     * @param request
      */
-    getActionFromRequest(request:Request):string;
+    getActionFromRequest(request: Request): Action;
 
     /**
-     * Returns true if an action can be carried out by 
+     * Returns true if an action can be carried out by
      * requests with no tokens (ie. unauthenticated)
-     * @param action 
+     * @param action
      */
-    isActionAllowedWithNoToken(action:string):boolean;
+    isActionAllowedWithNoToken(action: string): boolean;
+
+    /**
+     * adds an action to the action object.
+     * @param action
+     */
+    addAction(action: Action): void;
 }

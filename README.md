@@ -1,6 +1,6 @@
-# Meal Kits Core Services
+# Only So Much Life Core Services
 
-This repository contains the core service apis of Meal Kits.
+This repository contains the core service apis of Only So Much Life.
 This is a monorepo of several modules that can work in isolation as long as the `common` 
 dependencies and `libs` are made available.
 

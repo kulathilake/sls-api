@@ -1,3 +1,5 @@
+import { attribute } from "@aws/dynamodb-data-mapper-annotations";
+
 /**
  * A representation of time in terms of Days, hours, mins and seconds.
  */
@@ -6,7 +8,7 @@ export type TimeBreakdown = {
     H : number;
     M : number;
     S : number;
-}
+};
 
 /**
  * Type defintion for media files made available or accessed
@@ -15,10 +17,10 @@ export type TimeBreakdown = {
 export type Media = {
     id?: string,
     url: string,
-    type: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE' ,
+    type: "IMAGE" | "VIDEO" | "AUDIO" | "FILE" ,
     isEmbedded?: boolean,
-    size?: number
-}
+    size?: number,
+};
 
 /**
  * Data Pagination
@@ -29,39 +31,46 @@ export type Media = {
  */
 export type PageMeta<T> = {
     size: number
-    from?: number | string |  {name:string, value: string | number}
-    fromName? :string
-    sort?: Sort
-}
+    from?: number | string |  {name: string, value: string | number}
+    fromField? : string
+    sort?: Sort,
+};
 
 /**
- * Actual page defined by meta 
+ * Actual page defined by meta
  * and as retrieved from datastore.
  */
 export type Page<T> = {
     count: number,
     meta: PageMeta<T>
-    next?: PageMeta<T> 
-    results: T[]
-}
+    next?: PageMeta<T>
+    results: T[],
+};
 
 export type Sort = {
     fieldName: string,
-    direction: 'ASC' | 'DESC'
-}
+    direction: "ASC" | "DESC",
+};
 
 /**
- * common dto interface
+ * common base entity
  */
-export interface BaseDto {
-    createdBy: string;
-    createdOn: Date;
+export class BaseEntity {
+    @attribute()
+    createdBy?: string;
+    @attribute({
+        type: "Date",
+        defaultProvider: () => new Date(),
+    })
+    createdOn?: Date;
+    @attribute()
     updatedBy?: string;
+    @attribute({
+        type: "Date",
+    })
     updatedOn?: Date;
     isRemoved?: boolean;
     removedOn?: Date;
     removedBy?: string;
-    sharedWith?: {user:string, permissions:string[]}[] 
-
+    sharedWith?: Array<{user: string, permissions: string[]}>;
 }
-
