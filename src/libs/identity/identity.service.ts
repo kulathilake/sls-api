@@ -17,6 +17,12 @@ export interface IdentityService {
      * @param password 
      */
     signInWithEmail(email:string,password:string):Promise<{accessToken:string, refreshToken: string}>;
+
+    /**
+     * Returns a new access token based on refresh token
+     * @param token 
+     */
+    refreshAccessToken(token:string):Promise<{accessToken:string}>
     /**
      * verifies a user account
      * @param username 

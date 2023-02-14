@@ -80,11 +80,39 @@ export class CognitoIdentitySvc implements IdentityService{
                             refreshToken: RefreshToken
                         })
                     }
+                } else {
+                    rej(new Error('Identity:SVC(Cognito):SignInWithEmail:Unknown Error'))
                 }
             })
         })
     }
 
+    refreshAccessToken(token: string): Promise<{ accessToken: string; }> {
+        return new Promise((res,rej)=>{
+            this.client.adminInitiateAuth({
+                AuthFlow: 'REFRESH_TOKEN_AUTH',
+                ClientId: USER_POOL_CLIENT_ID,
+                UserPoolId: USER_POOL_ID,
+                AuthParameters: {
+                    'REFRESH_TOKEN': token,
+                }
+            }).send((err,data)=>{
+                if(err){
+                    rej(err);
+                }else if(data.AuthenticationResult){
+                    const {AccessToken,RefreshToken} = data.AuthenticationResult
+
+                    if(AccessToken){
+                        res({
+                            accessToken: AccessToken
+                        })
+                    }
+                } else {
+                    rej(new Error('Identity:SVC(Cognito):RefreshAccessToken:Unknown Error'))
+                }
+            })
+        })
+    }
     verifyToken(token: string): Promise<IdentityAttribs> {
       
         return new Promise((res,rej) => {
@@ -96,7 +124,7 @@ export class CognitoIdentitySvc implements IdentityService{
                     rej(err);
                 }else {
                     res({
-                        userId: data.UserAttributes.find(a=>a.Name==='sub'), 
+                        userId: data.UserAttributes.find(a=>a.Name==='sub')?.Value, 
                         email: data.UserAttributes.find(a=>a.Name==='email')?.Value,
                         role: data.UserAttributes.find(a=>a.Name==='custom:role')?.Value,
                     } as IdentityAttribs)

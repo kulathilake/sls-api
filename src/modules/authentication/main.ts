@@ -49,7 +49,16 @@ app.post('/:id/confirm', async (req,res,next) => {
     try {
         const userId = req.params.id;
         const {email,code} = req.body as EmailConfirmRequest;
-        const confirmRes = await authSVC.verifyEmailConfirmationCode(email,code)
+        let confirmRes:boolean;
+        try {
+            confirmRes = await authSVC.verifyEmailConfirmationCode(email,code)            
+        } catch (error) {
+            if((error as Error).message === 'User cannot be confirmed. Current status is CONFIRMED'){
+                confirmRes = true;
+            }else {
+                throw error;
+            }
+        } 
         if(confirmRes){
             const updateRes = await userSVC.updateUser(userId,{isEmailVerified:true});
             if(updateRes){
@@ -78,7 +87,8 @@ app.post('/signin',async (req,res)=>{
     try {
         const {email,password} = req.body as EmailSignInRequest;
         const signInRes = await authSVC.signInWithEmail(email,password);
-        res.json(signInRes);
+        const userAttribs = await authSVC.verifyToken(signInRes.accessToken);
+        res.json({...signInRes, user: userAttribs});
     } catch (error) {
         res.status(500).json({
             error: `Authentication:SignIn:${(error as any).message}`
@@ -86,5 +96,20 @@ app.post('/signin',async (req,res)=>{
     }
 });
 
+app.post('/refresh',async (req,res)=>{
+    try {
+        const {refreshToken} = req.body as {refreshToken: string};
+        const refreshRes = await authSVC.refreshAccessToken(refreshToken);
+        if( refreshRes ) {
+            res.json(refreshRes);
+        } else {
+            throw new Error("Authentication:Refresh:Unknown Error")
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: `Authentication:Refresh:${(error as any).message}`
+        })
+    }
+});
 
 export const handler = _handler;
