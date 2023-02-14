@@ -5,8 +5,6 @@ import { AWS_REGION, USER_POOL_CLIENT_ID, USER_POOL_ID } from "../../../common/e
 import { Roles } from "../../../common/types/UserRoles";
 import { getPermissionOnRole } from "../../accesscontrol/consts/permissions";
 
-
-
 @Service()
 export class CognitoIdentitySvc implements IdentityService{
     private client:CognitoIdentityServiceProvider

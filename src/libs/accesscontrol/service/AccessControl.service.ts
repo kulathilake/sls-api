@@ -4,6 +4,8 @@ import { pathToRegexp, match } from "path-to-regexp";
 import { ParsedQs } from "qs";
 import { Inject, Service } from "typedi";
 import { BaseEntity } from "../../../common/common.types";
+import { IdentityService } from "../../identity/identity.service";
+import { CognitoIdentitySvc } from "../../identity/service_impl/cognito.identity.serviceImpl";
 import { getPermissionsOnResourceType } from "../consts/permissions";
 import { Action } from "../types/acl.types";
 import { AccessControl } from "./IAccessControl.service";
@@ -13,6 +15,9 @@ export class AccessControlImpl implements AccessControl {
 
     @Inject('BASE_PATH')
     basePath!: string;
+
+    @Inject('IDENTITY_SERVICE')
+    authSvc!: IdentityService
 
     /**
      * Cache token reads
@@ -46,10 +51,17 @@ export class AccessControlImpl implements AccessControl {
             return (this.currentUser as any).role;
         } else {
             /** by pass for offline development */
-            if(process.env.IS_OFFLINE){
+            if(process.env.IS_OFFLINE && token.length === 0){
                 return Promise.resolve('ADMIN')
             }else {
-                throw new Error('method not implemented')
+                return this.authSvc.verifyToken(token)
+                .then(res => {
+                    if(res?.role) return res.role;
+                    throw new Error('ACL:getUserRole:Auth did not return role');
+                })
+                .catch(e=>{
+                    throw new Error(`ACL:getUserRole:${(e as any).message}`)
+                })
             }
         }
     }
@@ -72,7 +84,7 @@ export class AccessControlImpl implements AccessControl {
         const customPerms = await this.getCustomUserPermissions(token);
         if(role && action){
             const permissions = getPermissionsOnResourceType(role,action.resource);
-            
+            console.log(permissions)
             return this.authorizationChecker(action,[...permissions,...customPerms])
         } else {
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Token does not provide a valid user role.')
@@ -95,12 +107,12 @@ export class AccessControlImpl implements AccessControl {
         };
 
     }
-    getActionFromRequest(request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>): string {
+    getActionFromRequest(request: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>): Action {
         const requestPath = this.basePath + request.path;
         const doesMatch =(p:string)=>match(p,{decode:decodeURIComponent});
         const action = this.actions.find(action => doesMatch(action.path)(requestPath) && action.method === request.method);
         if(action){
-            return action.name
+            return action
         }else {
             throw new Error('ACL:getActionFromRequest: Action not found');
         }
@@ -121,6 +133,7 @@ export class AccessControlImpl implements AccessControl {
     */
     private authorizationChecker(action: Action, userPermissions: string[]): boolean {
         if(action){
+            if(action.requiredPermissions.length === 0) return true;
             return action.requiredPermissions.some((group)=>{
                 return group.every(p=> userPermissions.includes(p))
             })

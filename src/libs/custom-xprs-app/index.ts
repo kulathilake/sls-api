@@ -8,6 +8,7 @@ import { accesscontrol } from '../accesscontrol/middleware/acl.middleware';
 import Container from 'typedi';
 import 'reflect-metadata';
 import { AccessControlImpl } from '../accesscontrol/service/AccessControl.service';
+import { CognitoIdentitySvc } from '../identity/service_impl/cognito.identity.serviceImpl';
 
 /**
  * Creates a custom version of Express app and returns a serverless wrapped
@@ -18,6 +19,9 @@ import { AccessControlImpl } from '../accesscontrol/service/AccessControl.servic
  */
 export function useCustomExpressApp(basePath:string, useACL=true) {
     Container.set('BASE_PATH',basePath);
+    Container.set('IDENTITY_SERVICE', Container.get(CognitoIdentitySvc));
+    Container.set('ACL_SERVICE', Container.get(AccessControlImpl));
+    
     const acl = Container.get(AccessControlImpl);
     const app = express();
     app.use(bodyparser.json());

@@ -7,6 +7,7 @@ import { Roles } from "../../common/types/UserRoles";
 import { User } from "../users/user.model";
 import { EmailConfirmRequest } from "./dtos/emailConfirm.request.dto";
 import { EmailSignInRequest } from "./dtos/EmailSignIn.request.dto";
+import 'reflect-metadata';
 
 /**
  * Endpoint exposing authentication tasks

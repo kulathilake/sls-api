@@ -1,4 +1,5 @@
 import Container from "typedi";
+import { ADMIN_VIEW_ANY, VIEW_OWN_RESOURCE, VIEW_PUBLIC_RESOURCE, VIEW_SHARED_RESOURCE } from "../../libs/accesscontrol/consts/permissions";
 import {useCustomExpressApp } from "../../libs/custom-xprs-app";
 import { User } from "./user.model";
 import { UserService } from "./user.service";
@@ -6,7 +7,13 @@ const {app,handler:_handler} = useCustomExpressApp('/user');
 const service = Container.get(UserService);
 
 /** Lists all users */
-app.registerApiAction({resource: 'user', name:'User:Get',method:'GET',path:'/user',requiredPermissions:[]});
+app.registerApiAction({resource: 'user', name:'User:Get',method:'GET',path:'/user',
+    requiredPermissions:[
+        [VIEW_PUBLIC_RESOURCE],
+        [VIEW_OWN_RESOURCE],
+        [VIEW_SHARED_RESOURCE],
+        [ADMIN_VIEW_ANY]
+    ]});
 app.get('/',(req,res,next)=>{
     const query = req.query as {k?:string,v?:string|number|boolean, i?: string, from?: string, size?: number, fromField?: string};
     service.listActiveUsers({

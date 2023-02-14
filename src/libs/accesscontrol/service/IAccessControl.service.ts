@@ -47,7 +47,7 @@ export interface AccessControl {
      * Returns the matching action for a given express request;
      * @param request 
      */
-    getActionFromRequest(request:Request):string;
+    getActionFromRequest(request:Request):Action;
 
     /**
      * Returns true if an action can be carried out by 
