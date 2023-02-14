@@ -1,13 +1,4 @@
-# Only So Much Life Core Services
-
-This repository contains the core service apis of Only So Much Life.
-This is a monorepo of several modules that can work in isolation as long as the `common` 
-dependencies and `libs` are made available.
-
-For deployment purposes, Serverless framework is used. It will expose features (found inside `src/apis`)
-through their own handler functions as AWS lambda functions.
-
-`typeDi` is used for dependency injection.
+# SLS-API
 
 ## Usage
 

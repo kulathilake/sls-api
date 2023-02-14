@@ -1,7 +1,7 @@
 {
-  "name": "only-so-much-life-core-services",
+  "name": "sls-api",
   "version": "1.0.0",
-  "description": "Core apis for Only So Much Life service",
+  "description": "serverless based boilerplate backend with built in ACL and Auth",
   "scripts": {
     "dev": "sls offline start",
     "test": "jest -c",
