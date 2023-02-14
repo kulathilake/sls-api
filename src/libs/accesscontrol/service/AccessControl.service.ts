@@ -4,7 +4,7 @@ import { pathToRegexp, match } from "path-to-regexp";
 import { ParsedQs } from "qs";
 import { Inject, Service } from "typedi";
 import { BaseEntity } from "../../../common/common.types";
-import { IdentityService } from "../../identity/identity.service";
+import { IdentityAttribs, IdentityService } from "../../identity/identity.service";
 import { CognitoIdentitySvc } from "../../identity/service_impl/cognito.identity.serviceImpl";
 import { getPermissionsOnResourceType } from "../consts/permissions";
 import { Action } from "../types/acl.types";
@@ -20,23 +20,12 @@ export class AccessControlImpl implements AccessControl {
     authSvc!: IdentityService
 
     /**
-     * Cache token reads
-     */
-    private _cachedUser: any;
-    /**
      * Cache a read entity for future use
      */
     private _cachedEntity?: {id:string,data:any};
 
     private actions: Action[] = []
 
-    get currentUser(){
-        if(this._cachedEntity){
-            return this._cachedUser;
-        } else {
-            return null
-        }
-    }
 
     get cachedEntity():{id:string,data:any} | null {
         if(this._cachedEntity){
@@ -47,15 +36,14 @@ export class AccessControlImpl implements AccessControl {
     }
 
     async getUserRole(token: string): Promise<string> {
-        if(this.currentUser){
-            return (this.currentUser as any).role;
-        } else {
+
             /** by pass for offline development */
             if(process.env.IS_OFFLINE && token.length === 0){
                 return Promise.resolve('ADMIN')
             }else {
                 return this.authSvc.verifyToken(token)
                 .then(res => {
+                    this.authSvc.currentUser = res;
                     if(res?.role) return res.role;
                     throw new Error('ACL:getUserRole:Auth did not return role');
                 })
@@ -63,28 +51,25 @@ export class AccessControlImpl implements AccessControl {
                     throw new Error(`ACL:getUserRole:${(e as any).message}`)
                 })
             }
-        }
+        
     }
 
     getCustomUserPermissions(token: string): Promise<string[]> {
-        if(this.currentUser){
-            return (this.currentUser as any).customPermissions;
-        } else {
-              /** by pass for offline development */
-              if(process.env.IS_OFFLINE){
-                return Promise.resolve([])
-            }else {
-                throw new Error('method not implemented')
-            }
+
+        /** by pass for offline development */
+        if(process.env.IS_OFFLINE){
+            return Promise.resolve([])
+        }else {
+            throw new Error('method not implemented')
         }
+        
     }
 
     async isAuthorizedToAcessEndpoint(action: Action, token: string): Promise<boolean> {
         const role = await this.getUserRole(token); 
-        const customPerms = await this.getCustomUserPermissions(token);
+        const customPerms = await this.getCustomUserPermissions(token) || [];
         if(role && action){
             const permissions = getPermissionsOnResourceType(role,action.resource);
-            console.log(permissions)
             return this.authorizationChecker(action,[...permissions,...customPerms])
         } else {
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Token does not provide a valid user role.')
@@ -120,7 +105,7 @@ export class AccessControlImpl implements AccessControl {
     
     isActionAllowedWithNoToken(actionName: string): boolean {
         const action = this.actions.find(a => a.name === actionName);
-        return (!!action && action.requiredPermissions.length === 0);
+        return (!!action && action.requiredPermissions.some(permGroup=>{permGroup.every(p=>p==="*")}));
     }
 
     addAction(action: Action): void {
@@ -132,11 +117,27 @@ export class AccessControlImpl implements AccessControl {
     * single group
     */
     private authorizationChecker(action: Action, userPermissions: string[]): boolean {
+        let permGroupMatched: any;
         if(action){
             if(action.requiredPermissions.length === 0) return true;
-            return action.requiredPermissions.some((group)=>{
-                return group.every(p=> userPermissions.includes(p))
-            })
+            const authMatch = action.requiredPermissions.some((group)=>{
+                const match = group.every(p=> userPermissions.includes(p));
+                if(match) {
+                    // sets the current user's permission scope on this resource.
+                    if(this.authSvc.currentUser){
+                        this.authSvc.currentUser.permissions = {
+                            resources: [
+                                {
+                                    resourceType: action.resource,
+                                    permissions: group
+                                }
+                            ]
+                        };
+                    }
+                    return true;
+                }
+            });
+            return authMatch;
         }else{
             throw new Error('ACL:AuthorizationCheck(isAuthorized): Action not found');
         }

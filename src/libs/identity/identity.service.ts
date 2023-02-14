@@ -1,7 +1,7 @@
 import { Roles, UserRolePermissions } from "../../common/types/UserRoles";
 
 export interface IdentityService {
-
+    currentUser: IdentityAttribs | null;
     /**
      * Signs up a new user with email & password
      * @param email 

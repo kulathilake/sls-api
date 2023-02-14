@@ -4,6 +4,7 @@
 
 import { Request } from "express";
 import { BaseEntity } from "../../../common/common.types";
+import { IdentityAttribs } from "../../identity/identity.service";
 import { Action } from "../types/acl.types";
 
 export interface AccessControl {

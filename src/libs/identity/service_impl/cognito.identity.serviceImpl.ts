@@ -8,12 +8,22 @@ import { getPermissionOnRole } from "../../accesscontrol/consts/permissions";
 @Service()
 export class CognitoIdentitySvc implements IdentityService{
     private client:CognitoIdentityServiceProvider
-
+    private _currentUser: IdentityAttribs | null;
+    
     constructor(){
         this.client = new CognitoIdentityServiceProvider({
             region: AWS_REGION
         });
+        this._currentUser = null;
     }
+
+    public get currentUser(): IdentityAttribs | null {
+        return this._currentUser;
+    }
+    public set currentUser(value: IdentityAttribs | null) {
+        this._currentUser = value;
+    }
+
     verifyEmailConfirmationCode(email: string, code: string): Promise<boolean> {
         return new Promise((res,rej)=>{
             this.client.confirmSignUp({
