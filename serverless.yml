@@ -1,4 +1,4 @@
-service: sls-api-service
+service: onlysomuch-life-core-services
 frameworkVersion: '3'
 
 provider:

@@ -1,4 +1,4 @@
-# SLS-API
+# OnlySoMuch.Life Core Services
 
 ## Usage
 
